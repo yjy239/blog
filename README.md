@@ -64,11 +64,8 @@ summary:
 
 # 发布
 
-写好你的文章后, 可以直接在[http://localhost:4000](http://localhost:4000)查看效果, 结果ok的话, 直接提交到仓库的master分支, 即可自动通过CI/CD发布
+写好你的文章后, 可以直接在[http://localhost:4000](http://localhost:4000)查看效果
 
-# 访问
-
-[线上访问地址](http://blog.bu6.io)
 
 # 另外
 
