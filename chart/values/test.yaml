@@ -1,0 +1,87 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+nameOverride: blog
+
+# 定义命名空间
+namespace: cs-front-test
+
+# tags
+env: test
+createMethod: ci
+
+ingress:
+  enabled: false
+  annotations: 
+    kubernetes.io/ingress.class: kong
+    ingress.kubernetes.io/rewrite-target: /
+    # nginx.ingress.kubernetes.io/rewrite-target: "/"
+    # nginx.ingress.kubernetes.io/app-root: /
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: enterprise-test.4009515151.com
+      paths:
+        - path: /blog
+          serviceName: blog
+          servicePort: http
+    - host: fgtest.4009515151.com
+      paths:
+        - path: /blog
+          serviceName: blog
+          servicePort: http
+   # tls:
+   # - secretName: tls-4009515151
+   #   hosts:
+   #     - enterprise-test.4009515151.com
+   #     - fgtest.4009515151.com
+
+imageName: blog  # 默认先使用deploy中定义的imageName, 如果deploy中未定义, 使用本行定义的imageName
+imageTag: latest
+pullPolicy: IfNotPresent
+register: bu6.io
+
+# 终止日志
+terminationMessagePath: /dev/termination-log
+terminationMessagePolicy: File
+
+deployments:
+  - deploymentName: blog # 需要唯一
+    enabled: true
+    replicaCount: 1
+    minReadySeconds: 15
+    fluentdTag: cs-front.blog.test
+    # command : ["command"]
+    args: ['web']
+    ports:
+      - name: http   # 给端口命名
+        containerPort: 80
+    # 资源控制
+    resources:
+      limits:
+        cpu: 200m
+        memory: 256Mi 
+      requests:
+        cpu: 50m
+        memory: 64Mi
+    # 生命探针
+    # 可读探针
+    tolerations: []
+    nodeSelector: {}
+    affinity: {}
+    service:
+      - name: blog   # 需要唯一
+        type: ClusterIP
+        ports:
+        - name: http
+          port: 80
+          targetPort: http # 和上面定义的ports[int].name一致
+
+sealedSecret:
+  enabled: false
+  path: sealedsecrets/zhuzher-test/sealedsecret.yaml
+  
+configMap:
+  enabled: false
+  name: config
+  spec:
+    env: test

@@ -1,0 +1,16 @@
+- hosts: prod
+  serial: 1
+  remote_user: deploy
+  tasks:
+    - name: 停止容器
+      shell: docker stop {{ container_name }} && docker rm {{ container_name }} || true
+
+    - name: 删除旧镜像
+      shell: docker rmi $(docker images -f reference='bu6.io/{{ image_name }}')  || true
+
+    - name: 运行容器
+      shell: docker run
+          --log-driver fluentd --log-opt fluentd-address=10.0.59.109:24224
+          --log-opt tag={{ fluentd_tag }} --log-opt fluentd-async-connect=true
+          --restart always
+          --name {{ container_name }} -d -p {{ container_port }}:{{ container_port }} bu6.io/{{ image_name }}:'{{ image_version }}' web

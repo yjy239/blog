@@ -1,0 +1,28 @@
+{{- range .Values.deployments }}
+{{- if .enabled }}
+{{- $deploymentName := .deploymentName }}
+{{- $fluentd_tag := .fluentdTag }}
+{{- if (.service | default false)}}
+{{- range .service }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .name }}
+  labels:
+    chart: "{{ $.Chart.Name }}-{{ $.Chart.Version | replace "+" "_" }}"
+    env: "{{ $.Values.env }}"
+    create-method: "{{ $.Values.createMethod }}"
+    fluentd-tag: "{{ $fluentd_tag }}"
+spec:
+  type: {{ .type }}
+  ports:
+{{ toYaml .ports | indent 2 -}}
+  selector:
+    app.kubernetes.io/name: {{ template "name" $ }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app: {{ $deploymentName }}
+{{- end}}
+{{- end}}
+{{- end}}
+{{- end}}

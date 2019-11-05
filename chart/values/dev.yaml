@@ -1,0 +1,105 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+nameOverride: sample
+
+# 定义命名空间
+namespace: zhuzher-dev
+
+# tags
+env: dev
+createMethod: skaffold
+
+ingress:
+  enabled: false
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    # nginx.ingress.kubernetes.io/app-root: /
+    # nginx.ingress.kubernetes.io/rewrite-target: "/"
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: fd-test.4009515151.com
+      paths:
+        - path: /test
+          serviceName: test
+          servicePort: http
+  tls:
+   - secretName: tls-4009515151
+     hosts:
+       - fd-test.4009515151.com
+
+imageName: outer-image # 默认先使用deploy中定义的imageName, 如果deploy中未定义, 使用本行定义的imageName
+imageTag: latest
+pullPolicy: IfNotPresent
+register: bu6.io
+
+# 终止日志
+terminationMessagePath: /dev/termination-log
+terminationMessagePolicy: File
+
+deployments:
+  - deploymentName: test-dp1 # 需要唯一
+    enabled: false
+    imageName: test-image1
+    replicaCount: 1
+    minReadySeconds: 15
+    fluentdTag: tag.test1.test
+    command : ["command"]
+    args: ['--arg3', 'value3', '--arg2', 'value2']
+    ports:
+      - name: http   # 给端口命名
+        containerPort: 8080
+    # 资源控制
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi 
+      requests:
+        cpu: 50m
+        memory: 64Mi
+    tolerations: []
+    nodeSelector: {}
+    affinity: {}
+    service:
+      name: test   # 需要唯一
+      type: ClusterIP
+      ports:
+      - name: http
+        port: 80
+        targetPort: http # 和上面定义的ports[int].name一致
+  - deploymentName: test-dp2
+    enabled: false
+    replicaCount: 1
+    fluentdTag: tag.test2.test
+    command: ["/usr/src/app/vesta"]
+    args: ["run"]
+    ports:
+      - name: http   # 给端口命名
+        containerPort: 8080
+    # 资源控制
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi 
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    tolerations: []
+    nodeSelector: {}
+    affinity: {}
+    service:
+      name: test2
+      type: ClusterIP
+      ports:
+      - name: http
+        port: 80
+        targetPort: http # 和上面定义的ports[int].name一致
+
+sealedSecret:
+  enabled: false
+  
+configMap:
+  enabled: true
+  name: config
+  spec:
+    env: test

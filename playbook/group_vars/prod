@@ -1,0 +1,4 @@
+---
+container_name: prod-grandhi
+container_port: 80
+fluentd_tag: cs-front.gandhi.prod

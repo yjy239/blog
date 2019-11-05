@@ -1,0 +1,88 @@
+{{- range .Values.deployments }}
+{{- if .enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .deploymentName }}
+  labels:
+    app.kubernetes.io/name: {{ template "name" $ }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+    app: {{ .deploymentName }}
+    helm.sh/chart: {{ template "chart" $ }}
+    chart: "{{ $.Chart.Name }}-{{ $.Chart.Version | replace "+" "_" }}"
+    env: "{{ $.Values.env }}"
+    create-method: "{{ $.Values.createMethod }}"
+    fluentd-tag: "{{ .fluentdTag }}"
+spec:
+  replicas: {{ .replicaCount }}
+  minReadySeconds: {{ .minReadySeconds }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ template "name" $ }}
+      app.kubernetes.io/instance: {{ $.Release.Name }}
+      app: {{ .deploymentName }}
+  template:
+    metadata:
+      annotations:
+        buildID: {{ $.Values.buildID }}
+      labels:
+        app.kubernetes.io/name: {{ template "name" $ }}
+        app.kubernetes.io/instance: {{ $.Release.Name }}
+        app: {{ .deploymentName }}
+        version: {{ $.Chart.AppVersion }}
+        fluentd-tag: "{{ .fluentdTag }}"
+    spec:
+      containers:
+      - name: {{ $.Chart.Name }}
+        {{- if .imageName}}
+        image: {{ $.Values.register }}/{{ .imageName }}:{{ $.Values.imageTag }}
+        {{- else if $.Values.imageName}}
+        image: {{ $.Values.register }}/{{ $.Values.imageName }}:{{ $.Values.imageTag }}
+        {{- else}}
+        image: {{ $.Values.register }}/no-image-name:{{ $.Values.imageTag }}
+        {{- end}}
+        imagePullPolicy: {{ $.Values.pullPolicy }}
+        terminationMessagePath: {{ $.Values.terminationMessagePath }}
+        terminationMessagePolicy: {{ $.Values.terminationMessagePolicy }}
+        {{- if (.command | default false) }}
+        command:
+        {{- range .command }}
+        - {{ . }}
+        {{- end }}
+        {{- end }}
+        {{- if (.args | default false) }}
+        args:
+        {{- range .args }}
+        - {{ . }}
+        {{- end }}
+        {{- end }}
+        envFrom:
+        {{- if $.Values.configMap.enabled}}
+        - configMapRef:
+            name: {{ template "fullname" $ }}-{{ $.Values.configMap.name }}
+        {{- end}}
+        {{- if $.Values.sealedSecret.enabled}}
+        {{- $sealed := $.Files.Get $.Values.sealedSecret.path | fromYaml }}
+        - secretRef:
+            name: {{ $sealed.metadata.name }}
+        {{- end}}
+        {{- if (.ports | default false) }}
+        ports:
+{{ toYaml .ports | indent 10 -}}
+        {{- end }}
+        {{- if (.resources | default false)}}
+        resources:
+{{ toYaml .resources | indent 10 -}}
+        {{- end }}
+        {{- if (.livenessprobe | default false)}}
+        livenessProbe:
+{{ toYaml .livenessprobe | indent 10 -}}
+        {{- end}}
+        {{- if (.readinessprobe | default false)}}
+        readinessprobe:
+{{ toYaml .readinessprobe | indent 10 -}}
+        {{- end}}
+{{- end}}
+{{- end}}

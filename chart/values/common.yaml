@@ -1,0 +1,13 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# 定义命名空间
+namespace: test
+
+# tags
+env: test
+createMethod: manual
+
+imageTag: latest
+pullPolicy: IfNotPresent
+register: bu6.io

@@ -1,0 +1,125 @@
+# 定义ci的stage, 按照stage定义顺序执行, 每个stage可以有多个job, job是并行运行
+stages:
+  - prepare
+  - build
+  - deploy
+  - integration
+  - cleanup
+
+# 定义变量, 供后面的任务使用, 请仔细核对
+variables:
+  # 如果用submodule, git策略使用fetch, 并确认job里用的是fetch不是clone
+  GIT_STRATEGY: fetch
+  # git upstream repo
+  UPSTREAM_NAMESPACE: CS/front
+  # docker register [docker]
+  REGISTER: bu6.io
+  # image variables [docker]
+  IMAGE_NAME: blog
+  IMAGE_TAG: ${GITLAB_USER_LOGIN}-${CI_COMMIT_REF_SLUG}-${CI_PIPELINE_ID}
+  # sonar variable [sonar, sast]
+  # 静态检测, sonar_login和proj需要自行登录sonar创建
+  SONAR_HOST: "https://sonar.bu6.io"
+  SONAR_PROJ: "blog"
+  SONAR_LOGIN: "f74b1019d67494431e3c387745e9943f9a8bb0fa"
+  # 容器扫描服务 [docker, sast]
+  CLAIR_URL: "http://clair.bu6.io"
+
+  # helm chart path [k8s]
+  # 没有迁移到k8s可以不用
+  CHART_PATH: chart/
+  COMMIT_ID: HEAD
+
+# 下面三个模板是用来确定job在何时工作, 请确认UPSTREAM_NAMESPACE设置正确
+# 1. 不在upstream repo中执行, 即每个人fork的仓库执行
+.origin: &only_origin
+  except:
+    variables:
+      - $CI_PROJECT_NAMESPACE == $UPSTREAM_NAMESPACE
+
+# 2. 只在upstream repo运行
+.upstream: &only_upstream
+  only:
+    variables:
+      - $CI_PROJECT_NAMESPACE == $UPSTREAM_NAMESPACE
+
+# 3. 只在upstream repo的test分支运行, 例如发布到测试环境
+.upstream_test: &only_upstream_test
+  only:
+    refs:
+      - master
+    variables:
+      - $CI_PROJECT_NAMESPACE == $UPSTREAM_NAMESPACE
+  # except:
+  #   - master
+
+# 4. 只在upstream repo的release分支运行, 例如发布到生产环境
+.upstream_release: &only_upstream_release
+  only:
+    refs:
+      - web@CS/front/blog
+    variables:
+      - $CI_COMMIT_REF_NAME == "master"
+
+before_script:
+  - set -x
+  - git checkout ${COMMIT_ID}
+
+# 构建并推送镜像, 命令行参数--dockerfile需要指定文件路径
+.build: &build
+  stage: build
+  tags:
+    - docker
+  image:
+    name: docker:stable-git
+  retry: 2
+  script:
+    - echo ${ENV} image
+    - git rev-parse HEAD
+    # - if [ $ENV = "prod" ] && [ -z $CHANGELOG ]; then echo "生产发布需要填写CHANGELOG" && exit 1; fi;
+    - docker build --build-arg VERSION=$(git rev-parse --short HEAD) --build-arg LOG="${CHANGELOG}" --build-arg ENV=$ENV -t ${REGISTER}/${IMAGE_NAME}:${IMAGE_TAG} -f ${CI_PROJECT_DIR}/Dockerfile ${CI_PROJECT_DIR}
+    - docker push ${REGISTER}/${IMAGE_NAME}:${IMAGE_TAG}
+
+build_test: 
+  variables:
+    ENV: test
+  <<: *build
+  <<: *only_upstream_test
+
+build_prod:
+  variables:
+    ENV: prod
+  <<: *build
+  <<: *only_upstream_release
+
+# 下面几个job是cd相关, cd暂时使用jenkins
+.deploy: &deploy_definition
+  stage: deploy
+  image: bu6.io/helm-deploy:test
+  tags:
+    - docker
+  script:
+    - echo deploying app to ${NAMESPACE}
+    - helm diff upgrade --allow-unreleased
+      --namespace=${NAMESPACE}
+      --set imageTag=${IMAGE_TAG}
+      --set imageName=${IMAGE_NAME}
+      --set register=${REGISTER}
+      -f ${CHART_PATH}/${VALUES_FILE} 
+      ${RELEASE_NAME} ${CHART_PATH}
+    - helm upgrade --install 
+      --namespace=${NAMESPACE}
+      --set imageTag=${IMAGE_TAG}
+      --set imageName=${IMAGE_NAME}
+      --set register=${REGISTER}
+      -f ${CHART_PATH}/${VALUES_FILE}
+      --wait --atomic --recreate-pods
+      ${RELEASE_NAME} ${CHART_PATH}
+
+deploy->test:
+  variables:
+    NAMESPACE: cs-front-test
+    VALUES_FILE: values/test.yaml
+    RELEASE_NAME: test-${IMAGE_NAME}
+  <<: *deploy_definition
+  <<: *only_upstream_test
