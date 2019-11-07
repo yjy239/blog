@@ -1064,6 +1064,69 @@ table tr:nth-child(2n), thead {
     text-align: center;
 }
 
+/*子框架 设定flexbox布局 横向*/
+.chip-container .sub_container {
+    margin: 1rem auto 0.5rem;
+    width: auto;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+}
+
+.sub_container .time_container{
+    display: flex;
+    width: fit-content;
+    border-right: 1px solid #dddddd;
+    flex-direction: column;
+    position: relative;
+    margin: 0px;
+    padding-bottom: 0px;
+    justify-content: space-between;
+}
+
+.time_container .start_time{
+    font-size: 0.5rem;
+    color: #000;
+    margin-right: 0.5rem;
+}
+
+.time_container .end_time{
+    font-size: 0.5rem;
+    color: #000;
+    margin-right: 0.5rem;
+    bottom: 0px;
+}
+
+.sub_container .content_container{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+}
+
+.content_container .job_title{
+    font-size: 1.0rem;
+    margin-left: 0.5rem;
+}
+
+.content_container .project_text{
+    font-size: 0.8rem;
+    margin-left: 1.0rem;
+    margin-top: 0.5rem;
+}
+
+.content_container .project_url{
+    color: #f00909;
+}
+
+.content_container .content_text{
+    font-size: 0.5rem;
+    margin-left: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+
+
 .chip-container .tags-posts {
     margin-top: 20px;
 }
@@ -1455,6 +1518,7 @@ table tr:nth-child(2n), thead {
 .post-charts,
 .my-projects,
 .my-skills,
+.my_jobs,
 .post-charts {
     padding: 3.8rem 1.5rem 0.8rem 1.5rem;
 }
@@ -1462,6 +1526,7 @@ table tr:nth-child(2n), thead {
 .post-charts, .title,
 .my-projects .title,
 .my-skills .title,
+.my_jobs .title,
 .my-gallery .title {
     font-size: 2rem;
     margin-bottom: 2.25rem;
@@ -1567,8 +1632,8 @@ table tr:nth-child(2n), thead {
     margin-top: 2rem;
 }
 
-.my-skills .my-experience{
-    margin-top: 2rem;
+.my_jobs .my-experience{
+    margin: 2rem;
 }
 
 .my-experience .sub-title{

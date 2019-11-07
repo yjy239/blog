@@ -211,6 +211,24 @@ mySkills:
       background: 'linear-gradient(to right, #00BCD4 0%, #80DEEA 100%)'
       percent: 40%
 
+myExperience:
+  enable: true  
+  job:
+    万科物业:
+      from: 2018
+      to: 至今
+      url: "https://www.vankeservice.com/"
+      project:
+        住这儿:
+          url: "https://sj.qq.com/myapp/detail.htm?apkName=com.vanke.activity"
+          content: 核心业务与优化
+    中航科技:
+      from: 2017
+      to: 2018
+      project:
+        口袋车载:
+          content: 车载系统上监控车辆运行状态app
+
 
 # config gallery of my photos in about page.
 # If you don't want to display this `Gallery` content, you can deactivate or delete this configuration.

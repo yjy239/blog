@@ -1,0 +1,36 @@
+<div class="my_jobs">
+        <% if(theme.myExperience.enable){ %>
+            <div class="my-experience chip-container" data-aos="zoom-in-up">
+                    <div class="title center-align"><i class="fa fa-cog"></i>&nbsp;&nbsp;<%- __('目前就职') %></div>
+                    <% var jobs = theme.myExperience.job;%>
+                    <% Object.keys(jobs).forEach(function(job_name) { %>
+                        <div class="sub_container">
+                                <div class="time_container">
+                                    <span class="start_time"><%- jobs[job_name].to %></span>  
+                                    <span class="end_time"><%- jobs[job_name].from %></span>        
+                                </div>
+                                <% var pro_map = jobs[job_name].project;%>
+                                <div class="content_container">
+                                        <a href=<%- jobs[job_name].url %> target="view_window">
+                                            <span class="job_title"><%- job_name %></span>
+                                        </a>
+                                        <% Object.keys(pro_map).forEach(function(pro_name) { %>
+                                            <a href= <%- pro_map[pro_name].url %> class="project_url" target="view_window">
+                                                <span class="project_text"><%- pro_name %></span>
+                                            </a>
+            
+                                            <span class="content_text"><%- pro_map[pro_name].content %></span>
+                                        
+                                        
+                                        <%});%> 
+                                </div>
+                                
+                        </div>
+                    
+                    <%});%>
+                    
+        
+        <%}%>
+        
+</div>
+

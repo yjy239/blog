@@ -53,6 +53,10 @@
                 <%- partial('_widget/my-skills') %>
                 <% } %>
 
+                <% if (theme.myExperience && theme.myExperience.enable) { %>
+                    <%- partial('_widget/my-jobs') %>
+                <% } %>
+
                 <% if (theme.myGallery && theme.myGallery.enable) { %>
                 <%- partial('_widget/my-gallery') %>
                 <% } %>
