@@ -108,3 +108,9 @@ deploy:
   type: git
   repository: https://github.com/yjy239/yjy239.github.io.git
   branch: master
+
+# math支持
+mathjax:
+  enable: true
+  perpage: false
+  cdn: //cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML

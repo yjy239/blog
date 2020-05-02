@@ -177,7 +177,7 @@ tags:
 > 直接从new_document回退，直接回退桌面，想要改变这个行为，添加FLAG
 
 可能有点抽象，看看这个gif。
-![new_doucment.gif](https://upload-images.jianshu.io/upload_images/9880421-b39fa65e2f80e240.gif?imageMogr2/auto-orient/strip)
+![new_doucment.gif](/images/new_doucment.gif)
 
 从这里的现象能够看到实际上new_document新建了一个新的历史记录以及一个新的栈。我们看看adjustLaunchFlagsToDocumentMode这个方法是怎么初步处理new_document的。
 
@@ -217,7 +217,7 @@ private int adjustLaunchFlagsToDocumentMode(ActivityRecord r, boolean launchSing
 >- 读取到NEVER，则关闭FLAG_ACTIVITY_MULTIPLE_TASK
 
 如下面的情况：
-![singleTask/Instance的doucment.gif](https://upload-images.jianshu.io/upload_images/9880421-f69274c9dcd19b0b.gif?imageMogr2/auto-orient/strip)
+![singleTask,Instance的doucment.gif](/images/singleTask,Instance的doucment.gif)
 
 - 4. mLaunchTaskBehind 这个标志位判断是否新建的Activity盖在原来的Activity栈上。因此在原来的基础上判断了不是singleTask或者singleInstance，同时能打开new_document.
 
@@ -1556,7 +1556,7 @@ mWindowContainerController.reparent(newTask.getWindowContainerController(), posi
 
 -  1.启动栈的顶部TaskRecord和启动方的TaskRecord不一致或者启动方的不允许显示。则需要移动到其他的ActivityStack。因此此时比较特殊，因此按照上面解析的逻辑，是从有效的displayId中查找与当前模式兼容的ActivityStack，找不到则创建一个ActivityDisplay，再创建对应的ActivityStack。
 
-- 2. mTargetStack为空，则是默认的情况。设置为当前的启动方的ActivityStack。发现目标ActivityStack和启动的ActivityStack不是一个，则需要把启动方TaskRecord，重绑到目标的ActivityStack。
+- 2.mTargetStack为空，则是默认的情况。设置为当前的启动方的ActivityStack。发现目标ActivityStack和启动的ActivityStack不是一个，则需要把启动方TaskRecord，重绑到目标的ActivityStack。
 
 - 3.把目标ActivityStack移动到最前方。也就是设置为焦点ActivityStack，同时设置到ActivityDisplay集合的顶部
 

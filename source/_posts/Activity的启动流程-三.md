@@ -520,7 +520,7 @@ final boolean realStartActivityLocked(ActivityRecord r, ProcessRecord app,
 仅仅是这样列出就能很简单的看出了google工程师对Android生命周期设计上的优化。并且能看到的是，在这里面我们并不能看到七大生命周期中的onStart以及onRestart。实际上，onRestart复用了LaunchActivityItem重新启动Activity，而onStart只是在onCreate之后，App客户端本地调用。
 
 但是这样还不足以弄清楚整个结构什么，我们看看对应的UML图。
-![ClientTransaction.png](https://upload-images.jianshu.io/upload_images/9880421-d174cc97985df0c5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![ClientTransaction.png](/images/ClientTransaction.png)
 
 从这里我们清楚看到所有生命周期都是继承抽象出来的基类ClientTransactionItem。每当我们尝试着做着跨进程的操作，都会使用ClientTransactionItem这个基类。因此实际上还有ActivityResultItem,NewIntentItem等进行跨进程操作。
 
@@ -1305,18 +1305,18 @@ final ActivityRecord finishCurrentActivityLocked(ActivityRecord r, int mode, boo
                 || prevState == ActivityState.INITIALIZING) {
             r.makeFinishingLocked();
             boolean activityRemoved = destroyActivityLocked(r, true, "finish-imm:" + reason);
-
 ....
             return activityRemoved ? null : r;
         }
-
 ....
         return r;
     }
 ```
+
 能看到，此时将会尝试的调用addToStopping，会调到onStop方法，接着也会调用destroyActivityLocked，进行finish的核心操作。
 
 ### destroyActivityLocked
+
 ```java
 final boolean destroyActivityLocked(ActivityRecord r, boolean removeFromApp, String reason) {
 

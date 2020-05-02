@@ -49,7 +49,7 @@ Linux启动流程大致分为2个步骤：
 ## Android系统启动
 这里Android启动流程系统稍微有点不一样。
 这里借别人的一幅图：
-![启动流程.png](https://upload-images.jianshu.io/upload_images/9880421-b35f2c4b6cf97d32.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![启动流程.png](/images/启动流程.png)
 
 到了BootLoader内核引导程序的装载之后，会启动Linux内核。此时Linux内核就去启动第一个进程，init进程。
 
@@ -392,7 +392,7 @@ JniInvocation::JniInvocation() :
 
 如果不是这是几个so库无法通过接口实现来完成，那么这个设计模式uml如下：
 
-![jvm初始化.png](https://upload-images.jianshu.io/upload_images/9880421-f1235a326833ea3a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![虚拟机兼容设计.png](/images/虚拟机兼容设计.png)
 
 这里我将不涉及虚拟机初始化的流程，我将会专门开一个文章来总结。
 
@@ -1070,4 +1070,4 @@ runOnce做的事情分为三部分：
 
 这里按照惯例，我们画一幅时序图，总结
 
-![Android系统启动.png](https://upload-images.jianshu.io/upload_images/9880421-6f93744ca78e5210.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Zygote孵化进程时序图.png](/images/Zygote孵化进程时序图.png)

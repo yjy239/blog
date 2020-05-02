@@ -1,5 +1,5 @@
 ---
-title: Android 重学系列 Binder驱动初始化 Binder的Looper初始化
+title: Android 重学系列 Binder驱动初始化 Binder的Looper初始化(三)
 top: false
 cover: false
 date: 2019-05-03 16:14:54
@@ -33,9 +33,11 @@ int binder_become_context_manager(struct binder_state *bs)
     return ioctl(bs->fd, BINDER_SET_CONTEXT_MGR, 0);
 }
 ```
+
 这里又是我们熟悉的ioctl系统调用。这是初始化之后第一次使用bs对象，binder_state在binder_open中初始化的结构体。此时这个结构体包含着该binder的共享地址。
 
 我们直接看看binder_ioctl中的switch片段
+
 ```c
 case BINDER_SET_CONTEXT_MGR:
 		ret = binder_ioctl_set_ctx_mgr(filp);
@@ -64,11 +66,13 @@ out:
 	return ret;
 }
 ```
+
 实际上，我们需要关注的只有这么一小段。我们再一次从文件中获取私密对象，当前的进程对应的binder_proc对象。此时应用刚刚启动，因此整个binder驱动下都是空。因此此时我们需要新生成一个binder_node结构体加入到binder的红黑树中管理。而这个binder_node代表着在binder驱动中，一个进程，工作项，引用列表等关键数据的集合。
 
 当我们添加并且生成binder一个新的binder _node对象之后，把它赋值给binder_context_mgr_node这个对象。这个对象是为了快速的寻找service_manager而创建的全局对象。这也因为考虑到Android系统处处使用这个对象。
 
 我们来看看binder_new_node方法。
+
 ```c
 static struct binder_node *binder_new_node(struct binder_proc *proc,
 					   binder_uintptr_t ptr,
@@ -126,6 +130,7 @@ static struct binder_node *binder_new_node(struct binder_proc *proc,
 ```c
 binder_loop(bs, svcmgr_handler);
 ```
+
 实际上这里就是启动Android Service体系中的消息等待初始化。
 文件：/[frameworks](http://androidxref.com/9.0.0_r3/xref/frameworks/)/[native](http://androidxref.com/9.0.0_r3/xref/frameworks/native/)/[cmds](http://androidxref.com/9.0.0_r3/xref/frameworks/native/cmds/)/[servicemanager](http://androidxref.com/9.0.0_r3/xref/frameworks/native/cmds/servicemanager/)/[binder.c](http://androidxref.com/9.0.0_r3/xref/frameworks/native/cmds/servicemanager/binder.c)
 
@@ -172,7 +177,7 @@ void binder_loop(struct binder_state *bs, binder_handler func)
 
 - 1.service_manager先往binder驱动中往binder_write_read写入BC_ENTER_LOOPER ，告诉binder驱动进入service的循环命令。
 
-- 2. service_manager 进入阻塞，等待binder驱动往binder_write_read写入数据。
+- 2.service_manager 进入阻塞，等待binder驱动往binder_write_read写入数据。
 
 - 3.解析从binder驱动中传送上来的数据。
 
@@ -306,7 +311,7 @@ out:
 ```
 binder分为三个步骤进行解析从ioctl传送下来的数据。
 - 1.把传递下来的数据转型为内核对应的binder_write_read结构体。
-- 2. 当判断到binder_write_read中write_size大于0，说明有数据写入，则执行binder_thread_write。
+- 2.当判断到binder_write_read中write_size大于0，说明有数据写入，则执行binder_thread_write。
 - 3.当判断到binder_write_read中read_size大于0，说明有数据需要读取，则执行binder_thread_read。
 
 结束完之后，则从内核态的binder_write_read拷贝到用户态的binder_write_read数据中。因为此时传递下来的ubuf恰好就是用户空间对应的binder_write_read。因此能够直接通过copy_to_user把数据从内核空间拷贝一份到用户空间。
@@ -366,9 +371,11 @@ static int binder_thread_write(struct binder_proc *proc,
 	}
 	return 0;
 }
- ```
+```
+ 
 这里我只挑选出需要关注的分支。
 首先binder在处理写入数据的时候，由于没办法直接通过sizeof直接找到数据结构的边界，因此通过思路上和Parcel相似，通过下面几种参数来控制整个读写过程。
+
 ```c
    uint32_t cmd;
    void __user *buffer = (void __user *)(uintptr_t)binder_buffer;
@@ -376,22 +383,26 @@ static int binder_thread_write(struct binder_proc *proc,
    void __user *end = buffer + size;
 ```
  - 1.cmd 这个缩写英文我们可以直接望文生义，就是从framework中写进来的write_buffer中第一个int型，这个决定了驱动怎么解析这次命令数据。
+ 
 - 2.buffer 对应这用户空间的write_buffer 这里面存储着需要处理的数据。
 - 3.ptr 对应着此时binder驱动已经处理了多少数据。
-- 4. end 确定这一次buffer边界。
+- 4.end 确定这一次buffer边界。
 
 ##### 数据解析循环
+
 ```c
    while (ptr < end && thread->return_error == BR_OK) {
        if (get_user(cmd, (uint32_t __user *)ptr))
            return -EFAULT;
        ptr += sizeof(uint32_t);
 ```
+
 根据上面的数据解析，因此可以知道此时数据解析的循环结束条件有两个，第一 buffer的数据区域循环到了结束地址，第二，binder_thread 返回BR_OK。
 
 从第一个get_user从用户空间拷贝方法出来得知，每一次循环第一个参数必定是符合条件的cmd，对应着下面binder分支命令。接着消费指针向前移动一个int的大小，而后面就是我们需要处理的数据。
 
 此时我们从用户空间下传下来的命令正是BC_ENTER_LOOPER。
+
 ```c
   case BC_ENTER_LOOPER:
            binder_debug(BINDER_DEBUG_THREADS,
@@ -406,12 +417,14 @@ static int binder_thread_write(struct binder_proc *proc,
            break;
 
 ```
+
 此时命令需要的操作很简单，就是修改当前binder_proc对应的binder_thread的状态。
 
 这样就完成了service_manager 从用户空间的写入操作。还记得上面的对binder_write_read的结构体处理吗？此时因为read_size被设置为0.因此走不到binder_thread_read。接着把内核空间对应的binder_write_read拷贝回到用户空间即可。
 
 ### service_manager 正式进入到binder looper循环等待消息。
 文件：/[frameworks](http://androidxref.com/9.0.0_r3/xref/frameworks/)/[native](http://androidxref.com/9.0.0_r3/xref/frameworks/native/)/[cmds](http://androidxref.com/9.0.0_r3/xref/frameworks/native/cmds/)/[servicemanager](http://androidxref.com/9.0.0_r3/xref/frameworks/native/cmds/servicemanager/)/[binder.c](http://androidxref.com/9.0.0_r3/xref/frameworks/native/cmds/servicemanager/binder.c)
+
 ```c
   for (;;) {
         bwr.read_size = sizeof(readbuf);
@@ -425,12 +438,14 @@ static int binder_thread_write(struct binder_proc *proc,
             break;
         }
 ```
+
 可以看到这是一个无限的循环，等待着binder驱动信息返回信息。但是做一个google开发者怎么可能真的让循环不断进行下去呢？看过我启动的zygote一章节的读者，肯定知道一直在跑无限循环只会不断的开销cpu，因此在这个循环必定会通过阻塞之类的手段来规避这种looper的开销。
 
 我们看看循环的第一段。此时，把读取的数据长度设置为readbuf 一个长度为32的int数组。接着通过ioctl，通信到binder驱动。
 
 文件：/[drivers](http://androidxref.com/kernel_3.18/xref/drivers/)/[staging](http://androidxref.com/kernel_3.18/xref/drivers/staging/)/[android](http://androidxref.com/kernel_3.18/xref/drivers/staging/android/)/[binder.c](http://androidxref.com/kernel_3.18/xref/drivers/staging/android/binder.c)
 此时我们根据service_manager可以得知，此时write_size为0，read_size不为0,将会走binder_ioctl_write_read 读取数据的代码:
+
 ```c
     if (bwr.read_size > 0) {
         ret = binder_thread_read(proc, thread, bwr.read_buffer,
@@ -454,7 +469,9 @@ static int binder_thread_write(struct binder_proc *proc,
 out:
     return ret;
 ```
+
 我们看看binder_thread_read内部逻辑。
+
 ```c
 static int binder_thread_read(struct binder_proc *proc,
 			      struct binder_thread *thread,
@@ -548,17 +565,19 @@ done:
 	return 0;
 }
 ```
+
 原理和binder_thread_write相似。binder_thread_read 做了以下几件事情。
 - 1.首先判断到此时binder 驱动没有读取任何数据时候，则会为用户空间返回的数据中，第一段数据加上BR_NOOP。
-- 2. wait_for_proc_work 判断当前进程是否需要等待工作。这个标志位的判断条件为binder _thread的事务处理栈为空同时binder_thread 的todo list没有任何需要todo的项。
-- 3. 设置binder_thread->looper状态进入到了BINDER_LOOPER_STATE_WAITING状态
+- 2.wait_for_proc_work 判断当前进程是否需要等待工作。这个标志位的判断条件为binder _thread的事务处理栈为空同时binder_thread 的todo list没有任何需要todo的项。
+- 3.设置binder_thread->looper状态进入到了BINDER_LOOPER_STATE_WAITING状态
 - 4.假如需要等待，则判断当前binder初始化的时候是可阻塞工作还是不可阻塞工作。如果是可阻塞，则会取出binder _thread->wait 等待队列，让本进程进入到等待当中。还记得我之前写的等待队列的本质吧。实际上就是把这个时候进程会通过进程调度，把当前进程的需要的cpu资源让渡出去。如果是非阻塞，则判断当前binder_thread中是否还有需要的工作，没有则直接返回。
-- 5. 当当前进程的等待队列被唤醒，则会把 thread->looper 的BINDER_LOOPER_STATE_WAITING关闭。
+- 5.当当前进程的等待队列被唤醒，则会把 thread->looper 的BINDER_LOOPER_STATE_WAITING关闭。
 - 6.进入到while循环解析数据。
 
 而此时的场景，我们并有任何的需要工作的队列，因此通过wait_event_freezable把service_manager阻塞起来。
 
 ## service_manager binder_parse获取binder驱动回复的消息消息。
+
 ```c
 int binder_parse(struct binder_state *bs, struct binder_io *bio,
                  uintptr_t ptr, size_t size, binder_handler func)
@@ -590,10 +609,10 @@ int binder_parse(struct binder_state *bs, struct binder_io *bio,
 
 因此我们可以模拟tcp封包一样模拟出binder驱动在通信时候，数据是如何封包的。
 
-![binder通信封包.png](https://upload-images.jianshu.io/upload_images/9880421-13da2c92af9ef1e8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![binder通信封包.png](/images/binder通信封包.png)
 
 特殊的当读取通信信息的时候，封包格式将如下：
-![binder驱动读取之后返回的通信数据.png](https://upload-images.jianshu.io/upload_images/9880421-5f01cef0c75653f6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![binder驱动读取之后返回的通信数据.png](/images/binder驱动读取之后返回的通信数据.png)
 
 
 这里就是binder驱动在Android 系统中service_manager 体系的初始化。当然还有一种aidl的binder初始化，我将会在后面和大家揭晓。
@@ -601,16 +620,16 @@ int binder_parse(struct binder_state *bs, struct binder_io *bio,
 
 ### 总结
 这里总结一副时序图，为了便于理解，我省略掉通过软中断到内核空间的过程。
-![binder驱动在Android service系统初始化.png](https://upload-images.jianshu.io/upload_images/9880421-8fdf1bb57b11aaa5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![binder驱动在service系统初始化.png](/images/binder驱动在service系统初始化.png)
 
 从上图我们大致上可以总结出Binder驱动在系统初始化的时候大致上分为以下三步：
-- 1. binder_open 打开binder驱动文件，确认版本号，并把该进程以及相关信息映射到内核中
+- 1.binder_open 打开binder驱动文件，确认版本号，并把该进程以及相关信息映射到内核中
 - 2.mmap 确认能够打开binder驱动之后，再把当前进程的地址和内核映射到一起。
 - 3.把当前的service_manager作为一个binder实体注册到binder驱动中，作为第一个binder服务。
 - 4.进入binder_loop。先通过ioctl 通知binder驱动此时service_manager进入到了循环模式。接着调用读取数据函数，进入阻塞状态。当service_manager被唤醒，则开始解析从binder传上来的数据。
 
 到目前位置，我如下图已经将描红的部分在Android 服务系统中初始化的阐述完毕。
-![binder驱动初始化.png](https://upload-images.jianshu.io/upload_images/9880421-ba414b3e30f80084.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![binder驱动初始化.png](/images/binder驱动初始化.png)
 
 
 能够注意到的是，此时我们还没有添加任何的binder 的服务进来。但是基础的dns(service_manager)和路由分发器(Binder驱动)已经准备好了，接下来，让我们聊聊client 和 server的初始化。

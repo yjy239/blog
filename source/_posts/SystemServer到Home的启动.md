@@ -107,7 +107,7 @@ private void run() {
 这里可以初略分为4个步骤：
 - 1.记录从zygote过来的虚拟机等runtime参数。初始化android_server的so库，android_server初始化了重要的系统服务的native层
 - 2.为SystemServer设置Looper，并进入到loop的循环。等待其他应用的调用
-- 3. 初始化SystemServer 的context以及初始化SystemServiceManager
+- 3.初始化SystemServer 的context以及初始化SystemServiceManager
 - 4.启动各大主要的系统服务。
 
 直接从第三步开始
@@ -227,19 +227,19 @@ private void startBootstrapServices() {
 从此处可以清楚，我们Android系统立即需要的服务有如下几个：
 - 1.Installer 在SystemServer端，等待installd的服务通过Binder连接进来。解释这个installd会通过installd.rc读取脚本，生成一个installd的进程。该进程的作用是用来安装软件用的。
 
-- 2. DeviceIdentifiersPolicyService 该服务是为了验证设备身份用。
+- 2.DeviceIdentifiersPolicyService 该服务是为了验证设备身份用。
 
 - 3.ActivityManagerService 这就是我们最为熟悉的AMS，贯穿整个APP应用的服务，可以说熟悉的不能再熟悉了。负责的主要功能是管理，启动应用的Activity。同时把install这个服务装载进去。
 
-- 4. PowerManagerService 这是负责，协助管理电源的服务
+- 4.PowerManagerService 这是负责，协助管理电源的服务
 
-- 5. RecoverySystemService 这是负责系统恢复的服务。可以通过socket向底层uncrypt解密进程通信，并且读取/data/cache下的系统升级包，最后系统通过/recovery分区进入到重置模式，开始安装或者重置Android系统。
+- 5.RecoverySystemService 这是负责系统恢复的服务。可以通过socket向底层uncrypt解密进程通信，并且读取/data/cache下的系统升级包，最后系统通过/recovery分区进入到重置模式，开始安装或者重置Android系统。
 
-- 6. LightsService 控制手机的灯的设备。
+- 6.LightsService 控制手机的灯的设备。
 
-- 7. DisplayManagerService 这是从4.2开始作为手机管理显示的服务。
+- 7.DisplayManagerService 这是从4.2开始作为手机管理显示的服务。
 
-- 8. PackageManagerService 这也是个很重要的类，在我分析插件话框架的时候，有着极其重要地位。主要管理这个app应用的package的信息。
+- 8.PackageManagerService 这也是个很重要的类，在我分析插件话框架的时候，有着极其重要地位。主要管理这个app应用的package的信息。
 
 - 9. UserManagerService 也是很重要的类。早期的时候Android是一个单用户系统，而此时Android成为了多用户系统，而多用户就是通过这个类去管理
 
@@ -997,12 +997,12 @@ private static void startAppShortcutOrInfoActivity(View v, ItemInfo item, Launch
 
 # 总结
 老规矩，画两张张时序图总结一下。
-![Home的启动.jpg](https://upload-images.jianshu.io/upload_images/9880421-530f9d793e7b7c9a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Home的启动.jpg](/images/Home的启动.jpg)
 
 完整的图，可以等到，之后我写Android P的Activity启动流程看，也可以参照我在插件化框架一文。
 
 下面是Home app按钮点击的时序图
-![Home数据的加载与点击.jpg](https://upload-images.jianshu.io/upload_images/9880421-e2ff96cbc0362c3f.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Home数据的加载与点击.jpg](/images/Home的数据加载与点击.jpg)
 
 
 Google写的Home的界面还有挺多有趣的没有解析，但是这里我只关注App图标如何点击进来的。最后会通过startActivitySafely进来。

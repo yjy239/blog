@@ -55,7 +55,7 @@ Linux中，我们常见有一下几种进程间通信：
 而此时pipe必定是先通过内核调用copy_from_user方法把初始化数据拷贝一份内核空间中，此时通过alloc_file通过kmalloc在调用slab在内核空间创建2个文件描述符。
 
 大致上示意图如下：
-![pipe的工作流程.png](https://upload-images.jianshu.io/upload_images/9880421-903178de63f11087.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![pipe的工作流程.png](/images/pipe的工作流程.png)
 
 记住fd[0]是读通道，fd[1] 是写通道
 
@@ -98,14 +98,14 @@ Linux中，我们常见有一下几种进程间通信：
 # Binder 的概述
 介绍了Linux的几种基础IPC(进程间通信),我们发现一个很有趣的现象。大部分的IPC通信都通过文件作为中转站来回通讯。这样势必会造成用户态，内核态在来回切换，那么必定造成这种数据拷贝两次的情况。那么我们有没有办法处理优化这种通信方法呢？Binder就诞生了。
 
-![常见的IPC设计思路.png](https://upload-images.jianshu.io/upload_images/9880421-0fb6aa9151fe10e5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![常见的IPC设计思路.png](/images/常见的IPC设计思路.png)
 
 那么我们要设计Binder的话，又能怎么设计呢？首先为了让整个透明并且可靠化，我们能采用TCP/IP这一套思路来保证信息的可靠性。其次为了减少来回的在用户往内核中拷贝空间能够创造模仿共享内存的方式。
 
 这样思路来了，实际上Binder也是遵从这套规则来创造出来的。
 
 Binder涉及十分广。这里我就厚着脸皮使用罗生阳大神那张Binder在系统中示意图。
-![Binder.png](https://upload-images.jianshu.io/upload_images/9880421-771f0c6acfa2cb8e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Binder.png](/images/Binder.png)
 
 
 我们可以关注到Binder中四种角色：
@@ -134,14 +134,14 @@ Binder涉及十分广。这里我就厚着脸皮使用罗生阳大神那张Binde
 大致知道这些角色之后，也就能清楚上方这个图的意义了。很简单，在Android系统启动的时候，会去启动一个Service Manager的进程。而这个进程会初始化好内核的Binder驱动。此时DNS和路由都准备好了。只要等到服务端注册进来，客户端取链接交互即可。
 
 下面是根据binder的设计的示意图。
-![binder IPC基本模型.png](https://upload-images.jianshu.io/upload_images/9880421-e84c67a0d475a348.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![binder IPC基本模型.png](/images/binder IPC基本模型.png)
 
 
 为什么我说Binder和TCP十分相似。首先在我们开发中从来不会注意到binder的存在，更加不会注意到Android开发中我们居然会有信息做了跨进程通信。这也侧面说明了binder的设计优秀以及binder已经对上层来说几乎透明化。
 
 那么让我们略去service manager 和binder 驱动看看service和client之间的关系。
 
-![Binder中service 和 client.png](https://upload-images.jianshu.io/upload_images/9880421-309243b63164756b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Binder中service 和 client.png](/images/Binder中service 和 client.png)
 
 这个通信方式和TCP的通信及其相似。那么初始化呢？是不是和TCP的模型相似呢？让我们阅读源码看看究竟。
 
@@ -378,7 +378,7 @@ bs->fd = open(driver, O_RDWR | O_CLOEXEC);
 这里面为用户空间中声明了每一个对应到内核的方法。每一次调用都会发出一个中断信号。用户空间会通过调用汇编调用，而这个汇编调用从这个头文件作为去尝试的找到来到内核中对应的方法。
 
 因此，我们可以规划出一个syscall的流程图。就以网上最常见kill分析为例子。
-![syscall 工作原理.png](https://upload-images.jianshu.io/upload_images/9880421-18661e87f09ba1b7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![syscall 工作原理.png](/images/syscall 工作原理.png)
 
 
 从上面的图，我们可以得知，整个流程氛围以下几个步骤：

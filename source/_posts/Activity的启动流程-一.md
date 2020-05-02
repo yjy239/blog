@@ -21,14 +21,14 @@ tags:
 
 ## 比较Android9.0和Android 7.0
 首先看看startActivity在Android7.0的时序图。
-![Activity的启动流程.jpg](https://upload-images.jianshu.io/upload_images/9880421-faeb6920e4496722.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Activity的启动流程.jpg](/images/Activity的启动流程.jpg)
 
 这里实际上就是从Android诞生之初，一直到Android 9.0的启动主要脉络。实际上外面的文章已经讲得滚瓜烂熟。包括我也看这些源码了这个不下10遍，应该更多。
 
 本文会继续看看Android 9.0的Acitvity启动流程的源码。看看Android 9.0比起7.0来说进步在哪里。
 
 我们先上时序图：
-![Android O Activity启动流程.png](https://upload-images.jianshu.io/upload_images/9880421-7dba0e0a681347a4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Android9.0中Activity启动流程.png](/images/Android9.0中Activity启动流程.png)
 
 注意：红色线代表跨越Binder一次进程
 
@@ -206,7 +206,7 @@ queryIntentActivitiesInternal分步骤来说：
 
 为什么加上这一段，实际上这一段有一个关键的逻辑就是AppLink。开发经常用到，在AndroidManifest中设置好schme等Intent参数，让外部app来唤醒我们自己的app。
 当唤醒的目的地只有一个直接返回，如果有多个则替换intent中的类，变成系统的ResolveActivity。用来选择我们的目的App，如下图。
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-30af72f06683c02f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![AppLink.png](/images/AppLink.png)
 
 - 2.查不到ResolveInfo则尝试从直接启动中获取
 自Android 5.0之后。Android系统将开始支持多用户系统，这些用户的配置都由UserManager控制，其中AccountManager则是控制每个用户下的账号。
@@ -323,7 +323,7 @@ queryIntentActivitiesInternal分步骤来说：
 重量级的进程一般是指在整个系统唯一存在一个进程，不会正常走保存恢复机制，而是一直运行在后台，不会被后台杀死，因此需要用户显示退出进入该进程。
 
 而这段代码就是当后台已经启动了一个重量进程的时候，用户又一次想要启动另一个重量级进程，就会弹出一个界面让用户进行选择。
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-6968dddf19011910.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![重量级应用的选择.png](/images/重量级应用的选择.png)
 就是这个弹窗选择界面。这种行为一般是给游戏这种极其消耗资源的进程处理。
 
 
@@ -785,7 +785,7 @@ private int updateLruProcessInternalLocked(ProcessRecord app, long now, int inde
 - 5.否则就逐个添加mLruProcessServiceStart之后；不带Activity/Service的进程插在mLruProcessServiceStart之前或者client之后。
 
 用一副图表示整个进程的LRU计算就是如下
-![Android进程LRU缓存调整.png](https://upload-images.jianshu.io/upload_images/9880421-28ec302068cc7b6d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Android进程LRU缓存调整.png](/images/Android进程LRU缓存调整.png)
 
 
 以上就是进程处理LRU全部内容。这也为什么Google工程师选择使用ArrayList而不是用LinkHashMap做LRU处理。因为Google工程机为这个LRU做了浮标，划分了调整的区域，这样就能进一步的压缩搜索和调整时间。
@@ -857,7 +857,7 @@ final ActivityStack resultStack = resultRecord == null ? null : resultRecord.get
 这一段代码就是第一次获取intent中的启动flag。首先处理的flag是FORWARD_RESULT。
 
 这个intent的flag用的不多，意思是透传requestCode。也就是说当设置了这个flag，那么被启动的这个Activity将不会接受这个requestCode。而是透传到启动的下一个Activity。但是作为透传者不能设置任何的requestCode，设置了则会报错 FORWARD_RESULT_FLAG used while also requesting a result。
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-c430dc44a0d8ab25.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![FORWARD_RESULT_FLAG异常.png](/images/FORWARD_RESULT_FLAG异常.png)
 
 了解到用法，我们可以直接从这里看到当我们设置了requestCode大于0则，会立即返回错误。否则的话当成并没有发送这个requestcode。此时将会取出启动这个sourceRecord的requestCode，resultWho设置给下一个Activity，把唤起的包名更换为sourceRecord，这样就完成了透传动作。
 

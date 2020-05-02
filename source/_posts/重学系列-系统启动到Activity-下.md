@@ -34,7 +34,7 @@ tags:
 实际上此处会new一个ZygoteConnection，会把LocalServerSocket的accpet传进去。此时就和普通的socket一样进入阻塞。
 
 让我先把LocalSocket这一系列的UML图放出来就能明白，这几个类之间关系。
-![LocalSocket uml.png](https://upload-images.jianshu.io/upload_images/9880421-45322a5f3e8c413e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![LocalSocket uml.png](/images/LocalSocket设计图.png)
 实际上，所有的LocalSocket，无论是服务端LocalServerSocket还是客户端LocalSocket都是通过LocalServerImpl实现的。
 
 ```java
@@ -429,7 +429,7 @@ private String[] readArgumentList()
 
 看吧实际上所有的字符串都是通过zygote的SocketReader读取出来，再赋值给上层。进行fork出新的进程。
 在ActivityManagerService的startProcessLocked
-```
+```java
 if (entryPoint == null) entryPoint = "android.app.ActivityThread";
 
     Process.ProcessStartResult startResult = Process.start(entryPoint,
@@ -753,7 +753,7 @@ https://www.cnblogs.com/skyfsm/p/7079458.html
 这样就能正确找到哪个socket。并且处理对应的ZygoteConnection。
 
 上个图总结：
-![zygote通信原理.png](https://upload-images.jianshu.io/upload_images/9880421-db2346577e958eb5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![zygote通信原理.png](/images/Zygote通信原理.png)
 
 
 
