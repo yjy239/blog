@@ -31,13 +31,13 @@ tags:
 
 这是Android渲染体系的第二定律。把这两个规律组合起来就是如下一个简单示意图。
 
-![SF交互设计图.png](https://upload-images.jianshu.io/upload_images/9880421-5e8da0309b336437.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![SF交互设计图.png](/images/SF交互设计图.png)
 
 #### SF的渲染第三定律：
 > SF是以生产者以及消费者为核心设计思想，把每一个应用进程作为生产者生产图元保存到SF的图元队列中，SF则作为消费者依照一定的规则把生产者存放到SF中的队列一一处理。
 
 用图表示就如下：
-![图元消费核心原理.png](https://upload-images.jianshu.io/upload_images/9880421-8c8c1f5d9eb44431.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图元消费核心原理.png](/images/图元消费核心原理.png)
 
 
 #### SF体系渲染的第四定律：
@@ -47,7 +47,7 @@ tags:
 
 为了解决这个问题，Android使用共享内存，使用的是匿名共享内存(Ashmem)。匿名共享内存也是一种拷贝一次的进程间通信方式，其核心比起binder的复杂的mmap更加接近Linux的共享内存的概念。
 
-![Ashmem.png](https://upload-images.jianshu.io/upload_images/9880421-f2b075bc97ded903.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Ashmem.png](/images/Ashmem.png)
 
 
 #### SF体系渲染的第五定律：
@@ -55,10 +55,10 @@ tags:
 
 第五定律的诞生实际上很符合Android系统的设计情况，除了需要Android应用有办法通知SF需要渲染的模式，当然需要SF自己不断的把图元绘制到屏幕的行为的自己回调自己的行为，SF自己不断的绘制在SF中的图元数据。
 
-![SF Vsync.png](https://upload-images.jianshu.io/upload_images/9880421-eae9ad00f72ba442.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![SF Vsync.png](/images/SF_Vsync.png)
 
 其中EventThread扮演一个极其重要的角色，在SF中设计大致如下:
-![EventThread.png](https://upload-images.jianshu.io/upload_images/9880421-c927c500a11152a7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![EventThread.png](/images/EventThread.png)
 
 
 #### Vsync的介绍
@@ -68,7 +68,7 @@ tags:
 
 双缓冲的概念大家应该都熟悉，在OpenGL我已经解释过了，双缓冲就是渲染第一帧的同时已经在绘制第二帧的内容，等到第二帧绘制完毕后就显示出来。这么做的好处很明显，如果一帧画完，才开始画下一帧，势必有一个计算的过程导致ui交互迟缓。
 
-![双缓冲.png](https://upload-images.jianshu.io/upload_images/9880421-df2d6a3c5b1abd83.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![双缓冲.png](/images/双缓冲.png)
 
 通过这种方式显示前一帧的时候提前绘制好下一帧图元，放在背后等待时机交换，这样就能从感官上流畅不少。
 
@@ -77,7 +77,7 @@ tags:
 理想是很丰满，但是现实很骨干，这么做好像没有问题，我们深入考虑一下，其实这个过程中有两个变量，一个是绘图速度，一个是显示速度。就算是绘图速度中也有分CPU和GPU的绘制速度。
 
 这里就沿用一下当年google在宣传黄油计划时候的示意图。让我们先看看没有缓冲正常运作的示意图：
-![draw_vsync.png](https://upload-images.jianshu.io/upload_images/9880421-5b956b2cab0307e5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![draw_vsync.png](/images/draw_vsync.png)
 
 最好的情况就是上图，在显示第0帧的时候，CPU/GPU合成绘制完成第1帧在16ms内，当vsync信号来了，就把第1帧交换到显示屏显示。
 
@@ -85,24 +85,24 @@ vsync是什么？玩游戏的时候经常看到垂直同步就是它。它的作
 
 
 但是很可能出现下面这种情况，CPU因为繁忙来不及，显示完第一帧的时候，还没空渲染第二帧，就算SF接受到了Vsync的信号，也只能拿出已经渲染好的第一帧显示在屏幕上。这样就重复显示了第一帧，Google开发团队称这种为jank。
-![jank.png](https://upload-images.jianshu.io/upload_images/9880421-55fef595ed4a978b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![jank.png](/images/jank.png)
 
 能看到显示第一帧因为第二帧没准备好，只能重复显示第一帧了。
 
 再来看看带着多重缓冲的的工作原理流程：
-![double_buffer.png](https://upload-images.jianshu.io/upload_images/9880421-5ae24a429aa51f65.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![double_buffer.png](/images/double_buffer.png)
 
 能看到此时就不是简单的第一第二帧，而是分为A缓冲，B缓冲。能看到在正常情况下，先显示A缓冲的内容，同时准备B缓冲，当一切正常的时候，B缓冲应该在下一个vsync来之前准备好，一旦vsync到来则显示B缓冲，A缓冲回到后台继续绘制。
 
 那么这种方式一旦遇到jank会是怎么一个情况呢？
-![double_jank.png](https://upload-images.jianshu.io/upload_images/9880421-aee0c6b89b29ad29.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![double_jank.png](/images/double_jank.png)
 
 如果是双缓冲好像没有问题，但是一旦出现jank了之后，之后显示屏就会不断的出现jank。如果缓冲A在显示，而B准备的时间超过16ms，就会导致A缓冲区重复显示，而B当b显示的时候，A也很可能准备时间不足16ms导致无法绘制完成，只能重复显示B缓冲的内容。
 
 这种方式更加的危险，为了解决这个问题，Google引入三重缓冲。
 
 当三重缓冲处理jank的原理流程图:
-![triple_buffer.png](https://upload-images.jianshu.io/upload_images/9880421-197b89d6881a7554.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![triple_buffer.png](/images/triple_buffer.png)
 
 能看到为了避免后面连锁式的错误，引入三重缓冲就为了让空闲出来的等待时间，能够做更多的事情。就如同双缓冲遇到jank之后，一旦B缓冲CPU+GPU的时间超过了下一个vsync的时间，能够发现其实CPU和GPU有一段时间都没有事情做，光等待下一次Vsync的到来，才会导致整个系统后面的绘制出现连锁式的出现jank。
 
@@ -116,10 +116,10 @@ vsync是什么？玩游戏的时候经常看到垂直同步就是它。它的作
 但是这一部分的知识，不足以让我们去理解定律5.其实每一次Vsync从硬件/软件过来的时候，Dispsync都会尝试着通知SF和app，这是完全没有问题，但是后面那个Phase相位又是什么东西？
 
 其实这就是系统的设计的巧妙，我们如果同时把信号通知同时告诉app和sf会导致什么结果？
-![无phase的冲突.png](https://upload-images.jianshu.io/upload_images/9880421-9ea579477ae875a0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![无phase的冲突.png](/images/无phase的冲突.png)
 
 如果此时app后返回了图元，但是sf已经执行了刷新合成绘制行为（很有可能，因为app到sf传输图元速度必定比sf自己通知自己慢），此时就会导致类似jank的问题，导致下一个vsync还是显示当前帧数，因此需要如下一个时间差，先通知app后通知sf，如下图：
-![sf和app的时间差.png](https://upload-images.jianshu.io/upload_images/9880421-9444db0a13b008ae.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![sf和app的时间差.png](/images/sf和app的时间差.png)
 
 加上这个理解就能明白第五定律。关于第五点的讨论，在[Vsync同步信号原理](https://www.jianshu.com/p/82c0556e9c76)有详细讨论。
 
@@ -138,7 +138,7 @@ vsync是什么？玩游戏的时候经常看到垂直同步就是它。它的作
 
 经过这一层层的屏蔽，让开发者不需要对Android底层的渲染体系有任何理解，也能绘制出不错的效果。
 
-![Android的渲染流程.png](https://upload-images.jianshu.io/upload_images/9880421-bec265bbd81bd13f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Android的渲染流程.png](/images/Android的渲染流程.png)
 
 最后会把绘制结果传输到屏幕中。
 
@@ -147,10 +147,10 @@ vsync是什么？玩游戏的时候经常看到垂直同步就是它。它的作
 ### 计划
 本次计划SurfaceFlinger的文章将会通过如下模块一一解析（但是不代表一个模块就只有一篇，也不代表最终顺序，仅仅代表你将会阅读到什么内容）：
 - 1. 图元核心传输工具，匿名共享内存ashmem驱动的核心原理,ashmem原理图大致如下:
-![ashmem.png](https://upload-images.jianshu.io/upload_images/9880421-1d6630ea15de8042.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![ashmem设计.png](/images/ashmem设计.png)
 
 详见[匿名内存ashmem源码分析](https://www.jianshu.com/p/6a8513fdb792)。然而在Android高版本，已经放弃了ashemem，改用ion驱动。ion的原理图大致如下：
-![GraphicBuffer和ion.png](https://upload-images.jianshu.io/upload_images/9880421-12d71610ec12a6a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![GraphicBuffer和ion.png](/images/GraphicBuffer和ion.png)
 
 关于ion的分析，详见[ion驱动源码浅析](https://www.jianshu.com/p/5fe57566691f)
 
@@ -159,27 +159,27 @@ ion实际上是生成DMA直接访问内存。原本ashmem的方式需要从GPU�
 
 - 2. SurfaceFlinger的启动。
 详见[SurfaceFlinger 的初始化](https://www.jianshu.com/p/9dac91bbb9c9)，原理图大致如下:
-![SF 初始化结构.png](https://upload-images.jianshu.io/upload_images/9880421-ea86942667f263d6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![SF初始化结构.png](/images/SF初始化结构.png)
 
 
 - 3. 开机没有Activity，只能直接使用SF机制加上OpenGL es显示开机动画，来看看从linux开机动画到Android开机动画 BootAnimation 。
 详见[系统启动动画](https://www.jianshu.com/p/a79de4a6d83c)，原理图大致如下：
-![开机动画启动原理.jpg](https://upload-images.jianshu.io/upload_images/9880421-138c2e9552a02da1.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![开机动画启动原理.jpg](/images/开机动画启动原理.jpg)
 
 
 - 4. 理解应用进程如何和SF构建起联系。
 详见[Vsync同步信号原理](https://www.jianshu.com/p/82c0556e9c76)。SF是通过一个名为Choreographer监听VSync进而得知绘制周期的。原理图大致如下：
-![VSync回调机制.jpg](https://upload-images.jianshu.io/upload_images/9880421-b3292681ea1e7f0a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![VSync回调机制.jpg](/images/VSync回调机制.jpg)
 
 
 - 5. SF硬件抽象层hal的理解和运作，理解SF如何和底层HWC/fb驱动关联起来。
 
 详见[SurfaceFlinger 的HAL层初始化](https://www.jianshu.com/p/8e29c3d9b27a)
 其核心数据结构如下：
-![HWC关键数据结构.jpg](https://upload-images.jianshu.io/upload_images/9880421-36b6605c236800a7.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![HWC关键数据结构.jpg](/images/HWC关键数据结构.jpg)
 
 底层硬件回调和SF之间的关联原理图如下：
-![ComposerCallback.png](https://upload-images.jianshu.io/upload_images/9880421-ba953bffd1a640a3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![ComposerCallback.png](/images/ComposerCallback.png)
 
 - 6. SF是如何连通DisplayManagerService[略,之后有机会进行补充]，只是简单的通过SurfaceFlinger获取屏幕信息放在Framework层管理。
 
@@ -187,23 +187,23 @@ ion实际上是生成DMA直接访问内存。原本ashmem的方式需要从GPU�
 这个模块分为两部分解析：
 一个是正常的OpenGL es使用流程中，软件模拟每一个关键步骤的工作原理是什么，Android在其中进行了什么优化。详见[OpenGL es上的封装(上)](https://www.jianshu.com/p/03c40afab7a5)
 其中有一个十分关键的数据结构，UML图如下：
-![纹理结构.png](https://upload-images.jianshu.io/upload_images/9880421-9da836d8609b6e83.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![纹理结构.png](/images/纹理结构.png)
 
-一个纹理在OpenGL es中是如何合成绘制的，并且Android进行了本地纹理的优化,详见[OpenGL es上的封装(下)](https://www.jianshu.com/p/29ab1b15cd2a)，整个OpenGL es的绘制原理如下：![OpenGL es纹理绘制过程.png](https://upload-images.jianshu.io/upload_images/9880421-7b030e6eaf5797e2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+一个纹理在OpenGL es中是如何合成绘制的，并且Android进行了本地纹理的优化,详见[OpenGL es上的封装(下)](https://www.jianshu.com/p/29ab1b15cd2a)，整个OpenGL es的绘制原理如下：![OpenGLes纹理绘制过程.png](/images/OpenGLes纹理绘制过程.png)
 
 - 8. 图元是怎么通过hal层生产出图元数据；应用的图元数据又是获取到应用，如何进入SurfaceFlinger的缓冲队列。
 详见[GraphicBuffer的诞生](https://www.jianshu.com/p/3bfc0053d254)。其中涉及了几个重要的数据结构：
-![GraphicBuffer生成体系.png](https://upload-images.jianshu.io/upload_images/9880421-91cdfcc956f1ffe2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![GraphicBuffer生成体系.png](/images/GraphicBuffer生成体系.png)
 
 同时运行原理图如下：
-![GraphicBuffer诞生到可使用.png](https://upload-images.jianshu.io/upload_images/9880421-4b4ce2a84bb4bf5b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![GraphicBuffer诞生到可使用.png](/images/GraphicBuffer诞生到可使用.png)
 
 
 - 9. 应用的图元数据是如何消费的。
 详见[图元的消费](https://www.jianshu.com/p/67c1e350fe0d)，交换缓冲绘制参数，本质是取出一个GraphicBuffer存到缓冲队列的时间和当前时间预计显示最接近的一个，渲染到屏幕中。同时把上一帧的GraphicBuffer放到空闲队列中。
 
 其中，我们需要记住下面这个SF中缓冲队列设计的数据结构：
-![Layer与缓冲队列的设计.png](https://upload-images.jianshu.io/upload_images/9880421-51b5def9207d2da4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Layer与缓冲队列的设计.png](/images/Layer与缓冲队列的设计.png)
 
 - 10. SF是如何通过HWC合成图层，如何合并各个Layer，输出到opengles中处理。
 大致上可以分为如下如下7步骤：
@@ -228,20 +228,20 @@ HWC2::Composition::Sideband|-|true|HWC或者OpenGL es
 后面四个步骤，我们只需要关注最后两个步骤即可。详见[图元的合成(下)](https://www.jianshu.com/p/65a3f8ac88c1)
 
 整一套的从消费到合成的流程原理图大致如下：
-![SF的图元合成.png](https://upload-images.jianshu.io/upload_images/9880421-585c1009e8f4abab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![SF的图元合成.png](/images/SF的图元合成.png)
 
 在合成的过程中，分为HWC和OpenGL es两种，两者负责的角色大致如下：
-![SF的图元合成设计.png](https://upload-images.jianshu.io/upload_images/9880421-3141e9bf535271c7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![SF的图元合成设计.png](/images/SF的图元合成设计.png)
 
 当然，在Android渲染体系中，也不是只有一对生产者消费者模型：
-![SF所有生产消费者.png](https://upload-images.jianshu.io/upload_images/9880421-09d7f7dba6493030.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![SF所有生产消费者.png](/images/SF所有生产消费者.png)
 
 - 11. SF的Vsync原理，以及相位差计算原理
 整个VSync发送中有三种发送周期：硬件发送VSync周期，软件发送VSync周期，app处理VSync周期，sf处理VSync周期。
 详见[Vsync同步信号原理](https://www.jianshu.com/p/82c0556e9c76)
 
 Android为了方便，会暂时把整个周期看成一个周期连续性的函数，计算原理如下：
-![计算角度.png](https://upload-images.jianshu.io/upload_images/9880421-e25dad78de9c8938.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![计算角度.png](/images/计算角度.png)
 
 其实就是获取每一个采样点相位，计算采样点相位的平均值就是理想相位。同理，周期也是计算采样点的平均周期，从而计算出一个合适的软件发送VSync轴。
 
@@ -251,12 +251,12 @@ Android为了方便，会暂时把整个周期看成一个周期连续性的函�
 详见[fence原理](https://www.jianshu.com/p/dca7c4d9495c)
 想要弄懂Fence，需要先了解GraphicBuffer的状态变更：
 大致分为如下几个状态：dequeue(出队到应用中绘制)，queue(入队到SF缓冲区等待消费)，acquire(选择渲染的GraphicBuffer)，free(消费完毕后等待dequeue)
-![GraphicBuffer状态流转.png](https://upload-images.jianshu.io/upload_images/9880421-4a996990a9668c01.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![GraphicBuffer状态流转.png](/images/GraphicBuffer状态流转.png)
 
 
 
 Fence的状态更简单，有acquire，release，retried状态流转大致如下：
-![fence转化流程图.png](https://upload-images.jianshu.io/upload_images/9880421-baacd4a1db6367dd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![fence转化流程图.png](/images/fence转化流程图.png)
 
 retried是每一次绘制完都会合并在一个不用的Fence中进行记录。
 

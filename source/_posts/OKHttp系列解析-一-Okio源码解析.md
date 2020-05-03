@@ -32,7 +32,7 @@ tags:
 
 当然这部分代码应该很多人熟悉，如果熟悉这些的人来说，本文是在浪费你的时间。
 
-![OkHttp设计基础框架.png](https://upload-images.jianshu.io/upload_images/9880421-fbe392f2d6ccb298.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![OkHttp设计基础框架.png](/images/OkHttp设计基础框架.png)
 
 
 # 正文
@@ -45,13 +45,13 @@ NIO有三个基本角色：
 - 3.Selector 选择器：实现异步，非阻塞IO
 
 借用网上一副总结比较好的图：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-a055967cfe4540d0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![io的比较.png](/images/io的比较.png)
 
 channel和buffer之间的关系如图：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-5484169804bfc526.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![channel和buffer.png](/images/channel和buffer.png)
 
 而selector会作为非阻塞IO，对多个Channnel进行管理，关系如图：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-b8aef694380660d8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![selector.png](/images/selector.png)
 
 那么NIO和IO有什么区别呢？
 > Java NIO和IO之间第一个最大的区别是，IO是面向流的，NIO是面向缓冲区的。NIO可以是非阻塞式的IO操作，IO则是面向流的阻塞式IO。
@@ -112,7 +112,7 @@ public void testNIO(){
 能看到NIO的所有的操作都要经过Buffer和Channel进行操作。
 
 我们稍微来看看NIO中FileOutputStream的源码时序图：
-![FileChannel工作流程.png](https://upload-images.jianshu.io/upload_images/9880421-b8423ece1f4525b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![FileChannel工作流程.png](/images/FileChannel工作流程.png)
 
 
 能根据上面的时序图，可以简单的看到实际上JDK首先简单的封装了一层Java API在顶层，接着会层层解封进入到native层，最后通过FileChannel调用到系统调用。
@@ -164,7 +164,7 @@ static jint Linux_pwriteBytes(JNIEnv* env, jobject, jobject javaFd, jbyteArray j
 那么fwrite的实现，很容易猜想到本质上也是对系统调用write上进行了一次封装。
 
 其核心思路如下图：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-4fd0bb971c6bb500.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![fwrite.png](/images/fwrite.png)
 
 通过一个缓冲区，等到缓冲区填满之后，在调用系统调用write写入磁盘中。通过这种方式调用，减少系统调用的次数，从而增加io读写的效率。
 
@@ -302,7 +302,7 @@ static jint Linux_pwriteBytes(JNIEnv* env, jobject, jobject javaFd, jbyteArray j
 
 通过上面两个例子，虽然没有看到Buffer的存在，是因为Okio在操作的过程中隐藏了这个对象的操作。
 为了更好的理解这几个对象之间的关系，我画了一副UML图：
-![Okio.png](https://upload-images.jianshu.io/upload_images/9880421-7fb7476c2f158526.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Okio.png](/images/Okio.png)
 
 能看到整个Okio继承和实现的关系比较复杂。但是面向我们的api一般是Buffer，以及封装好的Source,Sink。RealBufferedSource和RealBufferedSink往往承载着核心的读写操作。Buffer则作为Okio的缓冲区。
 
@@ -686,7 +686,7 @@ internal inline fun Buffer.commonWritableSegment(minimumCapacity: Int): Segment 
 换句话说，就是每一个新的segment都会添加到链表里面，最后把整个环链接起来。
 
 大致上整个链表结构如下图：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-5d6773b0e7a65ad7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![okio_segment.png](/images/okio_segment.png)
 
 ### SegmentPool管理Segment对象
 而在这个过程中，你能发现所有的Segment都被SegmentPool管理。这本质上就是一个享元设计模式。
@@ -778,7 +778,7 @@ SegmentPool会缓存固定大小的Segment进来，每一次通过take从中获�
 # 总结
 经过上面几个源码片段的阅读，我大致上能够整理出整个设计核心，如下：
 
-![Okio原理图.png](https://upload-images.jianshu.io/upload_images/9880421-75ee97db2119e398.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Okio原理图.png](/images/Okio原理图.png)
 
 
 从图上可以对比出结论，Okio和Linux的fwrite，Java的Channel读写思路一致。都是通过做缓存来减少系统调用的次数。而Okio做的更加的完善，内部所有的操作都要经过buffer缓冲区处理，而缓冲区内部管理细粒度更加细小的Segment，是通过一个链表环加上一个缓冲池来管理，这样就能更大限度的使用内存，同时避免了过多的缓存对象生成。

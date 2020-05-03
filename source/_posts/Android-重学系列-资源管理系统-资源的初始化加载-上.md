@@ -19,7 +19,7 @@ tags:
 
 其实这部分，有部分内容在我写插件化的文章里面有聊到过，也画过一张简单的时序图，不过这只是Resources类在Java层怎么初始化，怎么获取对应资源的。本文将会更加重点的，系统的探索，native的初始化以及读取数据。
 
-![Framework层的资源查找与context绑定.png](https://upload-images.jianshu.io/upload_images/9880421-8ee333d592a6cb32.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Framework层的资源查找与context绑定.png](/images/Framework层的资源查找与context绑定.png)
 
 不过，这仅仅只是一个很粗略的时序图。实际上每个Resources都会被ResourcesManager管理着。但是Resources相当于一个代理类，实际上真正的操作都是由ResourcesImpl去完成。
 
@@ -317,7 +317,7 @@ ResourcesImpl管理着什么？它一般管理着一个apk中各种资源文件�
 ```
 这里分为两种情况：
 - 1.存在activityToken 是指开发应用层的应用
-- 2. 不存在activityToken 是指系统应用
+- 2.不存在activityToken 是指系统应用
 
 
 
@@ -675,17 +675,17 @@ open方法的意思是，判断当前传进来的Zip的Entry，判断当前的en
 
 ### resource.arsc存储内容
 这个方法就是解析整个Android资源表的方法，只要了解这个方法，就能明白，Android是怎么找到id资源的。可能光看源码很难有直观的了解其中的数据结构，先来看看apk包中resource.arsc究竟有什么东西。我们借助AS的解析器看看内部:
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-f9093ffffb419115.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![resource.arsc存储内容.png](/images/resource.arsc存储内容.png)
 
 从这个表中能看到左边是资源的类型，右边是资源id以及资源具体的路径(或者具体的资源内容)。通常的，我们把resource.arsc中保存的资源映射表称为ResTable(资源表)。当然如果是类似String，id后面对应将会是字符串内容：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-ab80d8d51c29852b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![资源id.png](/images/资源id.png)
 
 
 当我们使用apk内部资源的时候，一般会使用如R.id.xxx的方式引入，本质上R.id就是对应在这个的int类型。在打包的时候，会把对应的id打包到resource.arsc中，在运行阶段会解析这个文件，通过这个映射id，找到对应的路径，才能正确的找到我们需要资源。
 
 之前在插件化基础框架一文中，曾经粗略的聊过每一个资源id的组成结构，这里就详细聊聊。
 一旦提到resource.arsc文件中的数据结构，就一定会提到下面这幅图
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-2373b696b44fa982.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![resource.arsc资源结构.png](/images/resource.arsc资源结构.png)
 
 #### Android资源打包过程
 在聊resource.arsc之前，我先聊聊Android中这个目录下的资源打包工具[/frameworks/base/tools/aapt/](http://androidxref.com/9.0.0_r3/xref/frameworks/base/tools/aapt/)
@@ -717,7 +717,7 @@ aapt是我们开发中中经常打交道，但是从来没有注意过的工具�
 ##### 收集Xml资源
 - 7.编译Xml资源文件： 解析Xml文件，生成XMLNode
 - 8.编译Xml资源文件：赋予属性名称资源ID,每一个Xml文件都是从根节点开始给属性名称赋予资源ID，然后再给递归给每一个子节点的属性名称赋予资源ID，直到每一个节点的属性名称都获得了资源ID为止。如下
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-90859f92dcc1062a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![view的标签.png](/images/view的标签.png)
 - 9.编译Xml资源文件：解析属性值; 上一步是对Xml元素的属性的名称进行解析，这一步是对Xml元素的属性的值进行解析。通过上一步的资源id来查找bag中的对应的字符串，这就作为解析的结果。("@+id/XXX"+符号的意思是如果没有对应的资源id就创建一个)
 
 ##### 压平Xml资源
@@ -799,7 +799,7 @@ std::unique_ptr<const LoadedArsc> LoadedArsc::Load(const StringPiece& data,
 }
 ```
 进来第一件事情就是把所有zip的chunk解析出来后，迭代寻找resource.arsc文件的标志头RES_TABLE_TYPE。找到之后，开始读取这个数据，寻找的是上面结构的如下结构:
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-95cc0cf15fa5f356.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![RES_TABLE_TYPE.png](/images/RES_TABLE_TYPE.png)
 
 
 #### LoadedArsc::LoadTable
@@ -852,11 +852,11 @@ bool LoadedArsc::LoadTable(const Chunk& chunk, const LoadedIdmap* loaded_idmap,
 ```
 在LoadPackage方法中，分别加载两个大区域的数据：
 - 1.RES_STRING_POOL_TYPE 象征着资源中所有字符串,style的资源池(不包括资源类型名称，以及资源数据项名称)。解析的是如下部分：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-f214b7afde609668.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![RES_STRING_POOL_TYPE.png](/images/RES_STRING_POOL_TYPE.png)
 比如：string.xml,某个R.string.xxx 中的值，比如drawable文件夹中，某个文件的具体路径
 
 - 2.RES_TABLE_PACKAGE_TYPE  象征着整个Package数据块，解析的是如下这部分:
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-db8210bd6217252b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![RES_TABLE_PACKAGE_TYPE.png](/images/RES_TABLE_PACKAGE_TYPE.png)
 
 
 #### ResStringPool的解析过程
@@ -893,7 +893,7 @@ struct ResStringPool_header
 };
 ```
 这个数据结构实际上是字符串资源池的这一部分:
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-26cfa77a5222cfa4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![ResStringPool_header.png](/images/ResStringPool_header.png)
 
 我们可以从该头部解析到整个资源池的大小，字符串个数，style个数，标记，以及字符串池子起始位置偏移量和style池子的起始位置偏移量。
 
@@ -904,7 +904,7 @@ struct ResStringPool_header
 值得注意的是字符串/style的个数并是指写入字符串/style的条数。为在setTo方法中会通过偏移量去计算整个资源StringPool/StylePool占用多少char。
 
 我们还有一处值得注意的是，在整个字符串资源池中，还有两个比较重要的Entrys还没聊,这两个entry(偏移数组)的位置在图中如下，在header的后方:
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-3f72e1607971c0d8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![偏移数组.png](/images/偏移数组.png)
 
 这两个偏移数组做的事情比较重要，当我们尝试着通过index去查找String的内容，就要访问这个偏移数组，来找到对应字符串的在整个池子中的位置。计算方法如下：
 > 字符串偏移数组起点 = header + header.size
@@ -1082,13 +1082,13 @@ break;
 
 根据type，我们就能区分如下几种类型：
 - 1.RES_TABLE_PACKAGE_TYPE   解析头部，解析如下部分的数据:
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-2b8281a55155e0b2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![RES_TABLE_PACKAGE_TYPE头部.png](/images/RES_TABLE_PACKAGE_TYPE头部.png)
 - 2.RES_STRING_POOL_TYPE 从资源类型字符串池子和资源项名称字符串池子解析所有资源类型名称，资源数据项名称中的字符串
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-7a1b57b44291fd1c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![资源类型字符串.png](/images/资源类型字符串.png)
 - 3.RES_TABLE_TYPE_SPEC_TYPE 解析所有的资源类型规范
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-bd1203b7fd86780b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![资源类型规范.png](/images/资源类型.png)
 - 4.RES_TABLE_TYPE_TYPE 解析所有的资源类型
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-2af28121e550bcaf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![所有的资源类型.png](/images/所有的资源类型.png)
 - 5.RES_TABLE_LIBRARY_TYPE 解析所有的第三方库资源，这里的图片没有显示。
 
 ## 小结
@@ -1113,7 +1113,7 @@ Resource 是由ResourcesImpl控制的。ApkAssets是每个资源文件夹在内�
  - 8.RES_TABLE_LIBRARY_TYPE代表所有的第三方资源库。
 
 三个不同的字符串资源池，就以layout文件夹为例子：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-88e149f8a36215c0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![三个不同的字符串资源池.png](/images/三个不同的字符串资源池.png)
 
 - 下标1最左侧指代的是资源类型名称，也就是位于package数据块中，typeString偏移数组以及类型字符串资源池的数据，RES_TABLE_TYPE_SPEC_TYPE 也是从这里找到正确的名称
 - 下标2 指代的是的是资源数据项名称，也就是位于package数据块中，String偏移数组以及资源数据项字符串资源池，RES_TABLE_TYPE_TYPE 也是从这里找到正确的名称。

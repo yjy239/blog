@@ -8,6 +8,7 @@ tag:
 description:
 author: yjy239
 summary:
+mathjax: true
 tags:
 - 音视频
 - OpenCV
@@ -30,21 +31,21 @@ OpenCV知识总结来到了下一个难度高一点的，掩码操作和模糊�
 而在深度学习中，往往每一个卷积核是一个奇数的矩阵，做图像识别的时候会通过这个卷积核做一次过滤，筛选出必要的特征信息。
 
 那么掩码操作在数学上是怎么回事？我们平常运用掩码做什么？在OpenCV中掩码最常见的操作就是增加图片对比度。对比度的概念是什么，在上一节聊过，通俗来讲就是能够增强像素之间的细节。我们可以对对每个像素做如下操作：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-5468ce7d4e9be674.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![掩码算法.png](/images/掩码算法.png)
 
 可能这幅图，理解起来比较困难。实际上流程如此：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-ca8e13e6b2f2854d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![卷积算法.png](/images/卷积算法.png)
 
 
 
 举个例子，就以计算出掩码矩阵之后的E的位置，能看到此时是原图中所有的像素都会取出和掩码矩阵一样大小的矩阵。也就是取出原图的红色那一块的领域，分别对E周边包括自己做了一次加权处理，最后赋值回E中。
 
 并且进行如下的权加公式：
-$F_{掩码矩阵之后的像素} = F_{原图像素} * 5 + A * 0 + -1 * B + 0 * C + -1 * E + -1 * G + I*0 + J*-1+K*0$
+<div>$F_{掩码矩阵之后的像素} = F_{原图像素} * 5 + A * 0 + -1 * B + 0 * C + -1 * E + -1 * G + I*0 + J*-1+K*0$</div>
 
 这样就能对原来的矩阵进行掩码处理。但是这么做发现没有，如果我们要对A做掩码处理就会发现掩码矩阵对应到原图的位置不存在。现在处理有两种，一种是不对边缘的像素做掩码处理，另一种是为周边的图像做一个padding处理，这种操作在深度学习的图像处理中很常见，通常设置0像素，或者拷贝对边的边缘像素。
 
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-f413ab3be9cc92eb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![卷积核处理原理.png](/images/卷积核处理原理.png)
 
 
 能看到这里处理和卷积处理不太一样，只是为了方便，把这种掩码滤波操作称为一种核，是自相关，并不是去计算卷积。
@@ -80,7 +81,7 @@ for(int row = 1;row < rows - 1;row++){
     imshow("test",dst);
     imshow("src", src);
 ```
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-47c6016789ab3947.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![掩码操作.png](/images/掩码操作.png)
 
 能看到此时这两张图片的对比度有很明显的区别。经过掩码矩阵之后，会发现原图会更加平滑一点，而掩码操作之后会导致整个图片最亮和最暗之间的差距拉大。
 
@@ -104,7 +105,7 @@ $g(i,j) = \sum_{k,l}f(i+k,j+k)h(k,l)$
 
 ### 均值(归一化)模糊
 这里先介绍均值滤波器，它的核心如下：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-1f999783f7fd1de3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![归一化.png](/images/归一化.png)
 
 ```cpp
 blur(src, dst, Size(121,121),Point(-1,-1));
@@ -117,13 +118,13 @@ blur(src, dst, Size(121,121),Point(-1,-1));
 最有用的滤波器 (尽管不是最快的)。 高斯滤波是将输入数组的每一个像素点与 高斯内核 卷积将卷积和当作输出像素值。
 
 高斯模糊实际上是一个二维的高斯核。回顾一下一维的高斯函数：
-![一维的高斯函数.png](https://upload-images.jianshu.io/upload_images/9880421-62f636fd6d27920e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![一维的高斯函数.png](/images/一维的高斯函数.png)
 
 那么二维实际上就是，就是在原来的x,y轴的情况下，增加一个z轴的纬度，实际上看起来就像一座山一样。
-![二维的高斯函数.png](https://upload-images.jianshu.io/upload_images/9880421-45077459e4e46910.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![二维的高斯函数.png](/images/二维的高斯函数.png)
 
 二维的高斯函数可以表示为：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-30dfa948f6ad2ea8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![二维的高斯函数公式.png](/images/二维的高斯函数公式.png)
 
 为了达到达到
 
@@ -141,7 +142,7 @@ GaussianBlur(src, gaussian, Size(121,121), 2);
 换个形象的话说，用上图举个例子，就是确定这个高斯函数这个山的x方向的陡峭程度以及y轴方向的陡峭程度。
 
 下面就高斯模糊，均值模糊和原图的比对
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-fd03124f99f4a196.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![模糊比对.png](/images/模糊比对.png)
 能看到，高斯模糊比起均值模糊保留了图像中相关的形状信息。
 
 为什么会这样呢？原因很简单。因为在计算高斯模糊之前，会根据当前像素区域中所有的像素点进行一次，核的计算，越往中心的权重越高，权重如同小山一下，因此中心的像素权重像素一高了，虽然模糊但是还是保留了原来的形状。
@@ -150,12 +151,12 @@ GaussianBlur(src, gaussian, Size(121,121), 2);
 ```cpp
 GaussianBlur(src, gaussian, Size(121,121), 121);
 ```
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-605a6b1e70e3e02f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![修改卷积核范围后的比对.png](/images/修改卷积核范围后的比对.png)
 
 
 高斯模糊计算流程：
 图像中某一段图形的像素是如下分布，
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-baf61aa74f14d389.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![像素分布.png](/images/像素分布.png)
 
 
 这个时候高斯模糊需要一个核去对每一个位置做滤波。此时不同于均值模糊，没有固定的核矩阵，而是通过上面这个矩阵，计算出高斯的核，最后再计算变化后的矩阵每一个对应的像素。
@@ -172,7 +173,7 @@ static const float small_gaussian_tab[][SMALL_GAUSSIAN_SIZE] =
 ```
 
 
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-facf7c718ccdbd6a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![卷积核心计算过程.png](/images/卷积核心计算过程.png)
 
 
 ## OpenCV filter滤波器源码解析
@@ -193,7 +194,7 @@ CV_IMPL_PLAIN|OpenCV原生实现
 
 能看到按照这个优先级不断的向下查找，找到当前OpenCV最快的计算环境。除了最后一个之外，其他三个都是并发计算。
 
-![OpenCV计算环境筛选.png](https://upload-images.jianshu.io/upload_images/9880421-c501c57fe89aaf41.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![OpenCV计算环境筛选.png](/images/OpenCV计算环境筛选.png)
 
 记住这个流程，我们查看OpenCV的源码就很轻松了。
 
@@ -1078,7 +1079,7 @@ int operator()(const uchar** src, uchar* dst, int width) const
 
 主要的流程在注释已经解释了。这里再度总结一下：
 其核心逻辑如下，把原图和核转化一个行向量，如下图
-![fliter2d原理.png](https://upload-images.jianshu.io/upload_images/9880421-949454d37959bcda.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![fliter2d原理.png](/images/fliter2d原理.png)
 
 但是，fliter2d担心核心每一步走的太大。因此当走完循环，则会检查此时i指针是否已经走完一行中所有的数据(一行的数据量-16)，没有则按照16位的步数再处理剩下，接着再检查(一行的数据量-4),还在这个范围，说明这个时候还有数据没有处理，则按照4位的前进处理。
 

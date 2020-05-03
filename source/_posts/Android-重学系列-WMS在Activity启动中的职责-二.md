@@ -30,7 +30,7 @@ tags:
 ConfigurationContainer是什么？上一篇文章有人细心一点就会注意到WindowContainer父类正是ConfigurationContainer。
 
 ## ConfigurationContainer家族
-![ConfigurationContainer家族.png](https://upload-images.jianshu.io/upload_images/9880421-610c98ae4df6071c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![ConfigurationContainer家族.png](/images/ConfigurationContainer家族.png)
 
 通过这个UML类图能够进一步的了解到ActivityDisplay控制的集合是ActivityStack。
 
@@ -1091,7 +1091,7 @@ private void addSplashscreenContent(PhoneWindow win, Context ctx) {
 经过这一篇文章的对Activity启动流程的各个线索串联起来，是不是对ActivityRecord，TaskRecord有了更加深刻的了解呢？
 
 这里我们可以针对AMS，WMS的各个ConfigurationContainer之间的关系，添加画一个图。
-![ConfigurationContainer之间联系.png](https://upload-images.jianshu.io/upload_images/9880421-d314af80d920e261.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![ConfigurationContainer之间联系.png](/images/ConfigurationContainer之间联系.png)
 
 
 同时本文也点出了，网上App启动优化一些不是很正确的观点。实际上这就是阅读Android源码的优点。下面我们将会深入WMS的添加实例Window，我这中间会跳过setContentView这些源码流程，这一块内容挺多的应该要专门拖出来聊聊，而不应该放在WMS中囫囵吞枣般的过一遍。

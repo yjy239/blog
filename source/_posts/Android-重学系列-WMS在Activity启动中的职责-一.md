@@ -150,7 +150,7 @@ private WindowManagerService(Context context, InputManagerService inputManager,
 结合上面的构造函数，我这里弄出了一幅从WMS角度看Android系统的显示体系。
 这里只是一个参考图，实际上在下面这幅图还有些不够准确。但是足以让人大致上了解到Android显示体系中，大体的研究方向，以及核心思想。
 
-![从WMS看Android的显示体系.png](https://upload-images.jianshu.io/upload_images/9880421-123d24d7c51f1e12.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![从WMS看Android的显示体系.png](/images/从WMS看Android的显示体系.png)
 
 
 
@@ -163,7 +163,7 @@ private WindowManagerService(Context context, InputManagerService inputManager,
 > WindowContainerController 在整个WMS中承担着控制WindowContainer的角色。
 
 下面是一个UML图
-![WindowContainer大家族.png](https://upload-images.jianshu.io/upload_images/9880421-beffe3fa9c70150a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![WindowContainer大家族.png](/images/WindowContainer大家族.png)
 
 能看到整个WMS几乎所有的核心操作需要核心类都在这里面了。
 
@@ -336,7 +336,7 @@ static class DisplayChildWindowContainer<E extends WindowContainer> extends Wind
 这里是指如Dialog，输入键盘的窗体容器。
 
 因此我能够依据顺序能够了解到，实际上在整个Android系统中，一旦开始绘制将会依照如下顺序进行绘制一个界面:
-![系统窗体.png](https://upload-images.jianshu.io/upload_images/9880421-33a1fed7ec30fedb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![系统窗体.png](/images/系统窗体.png)
 
 最后统统添加到RootWindowContainer中。
 
@@ -556,7 +556,7 @@ TaskStack，从名字上看来，是一个Task的管理栈。从实现的角度�
 
 从上面的WindowConatiner，我们能够知道每一个WindowContainerController和WindowContainer都有如下的控制关系。
 
-![WindowContainer和WindowContainerController关系.png](https://upload-images.jianshu.io/upload_images/9880421-7b5933aa10b2ade9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![WindowContainer和WindowContainerController关系.png](/images/WindowContainer和WindowContainerController关系.png)
 
 为了更加深刻的理解这几个数据结构，让我们也稍微过一下这些控制者们。
 
@@ -808,7 +808,7 @@ private void addStackReferenceIfNeeded(TaskStack stack) {
 根据上面WindowContainer之间的关系，WindowContainerController和WindowContainer之间的关系，我们能够构造出下面这个关系。
 
 先来看看WindowContainer之间的关系：
-![WindowContainer之间的联系.png](https://upload-images.jianshu.io/upload_images/9880421-f5b5f8a803d4b9ca.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![WindowContainer之间的联系.png](/images/WindowContainer之间的联系.png)
 
 
 因为WMS的窗体管理体系在Android9.0比起Android4.4,7.0来说抽象出了不少的对象，如果事先没有先对这些对象有一定了解，直接冲到源码里面阅读一定会晕头转向。

@@ -14,7 +14,7 @@ tags:
 ---
 # 前言
 上一篇文章，聊到了资源管理中解析Package数据模块中的LoadedPackage::Load方法开始解析Package数据块。本文将会详细解析Package数据块的解析，以及AssetManager如何管理。接下来解析resource.arsc还是依照下面这幅图进行解析：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-f46da504e504f952.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![resource.arsc结构.png](/images/resource.arsc结构.png)
 
 如果遇到问题欢迎在这个地址下留言：[https://www.jianshu.com/p/02a2539890dc](https://www.jianshu.com/p/02a2539890dc)
 
@@ -67,7 +67,7 @@ std::unique_ptr<const LoadedPackage> LoadedPackage::Load(const Chunk& chunk,
 }
 ```
 这一段是为解析package数据块的准备，首先解析Package数据块头部信息。实际上解析是下面这部分模块：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-203f189c69d81834.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![RES_TABLE_PACKAGE_TYPE头部.png](/images/RES_TABLE_PACKAGE_TYPE头部.png)
 
 首先取出当前的header的id并且获取交换低高位作为packageId(0x7f000000交换高低位变成0x7f)，如果当前的id是0x7f且打开了作为load_as_shared_library的标识位，或者id是0x00则作为动态资源加载，如果是第三方资源库则id为0.
 
@@ -213,7 +213,7 @@ std::unique_ptr<const LoadedPackage> LoadedPackage::Load(const Chunk& chunk,
       } break;
 ```
 在这个case中，实际上做的事情很简单，解析的是下面这部分
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-69950ae3d71a87f1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![资源类型字符串.png](/images/资源类型字符串.png)
 
 和这张图不一样的是，在这个字符串资源池其实还有一个header，这里面疏漏了。这里面算法很简单，如下：
 > 资源类型字符串池地址 = ResTable_package.header + typeString (偏移量)
@@ -255,7 +255,7 @@ std::unique_ptr<const LoadedPackage> LoadedPackage::Load(const Chunk& chunk,
       } break;
 ```
 此时解析的是下面这个数据块:
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-3c70be933e01e52c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![资源类型规范.png](/images/资源类型规范.png)
 
 
 首先来看看资源类型的结构体:
@@ -314,7 +314,7 @@ struct ResTable_typeSpec
 
 ```
 此时解析的是下面这个数据块:
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-818c15a1e61f2f43.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![所有的资源类型.png](/images/所有的资源类型.png)
 在上一节中解析每一个资源类型的时候构建了TypeSpecPtrBuilder对象。当没遇到一个新的资源项时候，将会取出这个TypeSpecPtrBuilder，并且通过AddType到这个对象中。这样就完成了id到资源类型到资源项的映射。
 看看资源项的数据结构：
 ```cpp
@@ -354,7 +354,7 @@ struct ResTable_type
 };
 ```
 能看到每一个资源项里面包含了一个头部，一个配置(语言环境)，还有entry的偏移量，entry是指什么呢？
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-99fec8b2295b3f09.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![解析restable_entry.png](/images/解析restable_entry.png)
 
 这个entry就是我们编程读取到的数据。
 
@@ -575,7 +575,7 @@ static AssetManager sSystem = null;
 能看到此时会先构建一个静态的AssetManager，这个AssetManager只管理一个资源包：/system/framework/framework-res.apk。而且还好根据/data/resource-cache/overlays.list的复写资源文件，把需要重叠的资源覆盖在系统apk上。
 
 打开其中的resource.arsc文件，发现packageID和应用的0x7f不一样，是0x01
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-c6037445f4806a4e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![系统资源id.png](/images/系统资源id.png)
 
 
 
@@ -809,13 +809,13 @@ cached_bags_实际上缓存着过去生成过资源id，如果需要则会清除
 限于篇幅的原因，下一篇文章将会和大家剖析Android是如何通过初始化好的资源体系，进行资源的查找。你将会看到，本文还没有使用过的ResTable_entry以及保存着真实数据的Res_Value是如何在资源查找中运作。
 
 首先先上一副，囊括Java层和native层时序图：
-![Android资源体系的初始化.png](https://upload-images.jianshu.io/upload_images/9880421-fa3de4a0ce5eb461.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Android资源体系的初始化.png](/images/Android资源体系的初始化.png)
 
 流程很长，也并不是很全，只是照顾到了主干。可以得知，在整个流程在频繁的和native层不断交流。仅仅依靠时序图，可能总结起来是不够好。
 
 在这里我们可以得知如下信息：
 AssetManager 在Java层会控制着ApkAsset。相对的AssetManager会对应着native层的AssetManager2，而AssetManager2控制着native层的ApkAsset对象。
-![AssetManager设计.png](https://upload-images.jianshu.io/upload_images/9880421-98bae4535dc3cd13.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![AssetManager设计.png](/images/AssetManager设计.png)
 
 
 换句话说，ApkAsset就是资源文件夹单位，而AssetManager只会控制到这个粒度。同时ApkAsset中存在四个十分重要的数据结构：
@@ -833,7 +833,7 @@ LoadedPackage里面有着大量的资源对象相关信息，以及真实数据�
 - 4. dynamic_package_map_ 是为了处理第三方资源库编译的packgeID和运行时ID冲突而构建的2次映射，但是解决冲突不是在这里解决
 
 ApkAsset有了这些信息，才能够根据resource.arsc 完整的构建出资源之间的关系。
-![ApkAssets的构成.png](https://upload-images.jianshu.io/upload_images/9880421-01c699ec7b9e0f3d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![ApkAssets的构成.png](/images/ApkAssets的构成.png)
 
 
 当然，仅仅又这些还不足，当ApkAsset设置到AssetManager2中的时候，AssetManager2为了更加快速，准确的加载内存做了如下努力：
@@ -841,7 +841,7 @@ ApkAsset有了这些信息，才能够根据resource.arsc 完整的构建出资�
 - 2.构建动态资源表，放在package_group中，为了解决packageID运行时和编译时冲突问题
 - 3.提前筛选出符合当前环境的资源配置到FilteredConfigGroup，为了可以快速访问。
 - 4.缓存已经访问过的BagID，也就是完整的资源ID。
-![AssetManager2的构成.png](https://upload-images.jianshu.io/upload_images/9880421-4acb38efa01d4b5a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![AssetManager2的构成.png](/images/AssetManager2的构成.png)
 
 
 所以，才叫Asset的Manager。同时我们能够看到，在整个流程中，资源的解析流程将会以resource.arsc为引导，解析整个Apk资源。但是本质上还是zip解压缩获取对应的数据块，只有访问这些zipentry才能真正的访问数据。当然，相关的字符串会集中控制在三个字符串缓存池中，如果遇到想要相应获取，可以从这几个缓存池对应的index获取。
@@ -853,7 +853,7 @@ ApkAsset有了这些信息，才能够根据resource.arsc 完整的构建出资�
 - 4.在ApkAsset保存着三个全局字符串资源池子，提供快速查找，对应到Java层的对象一般为StringBlock
 - 5.为了能够快速查找符合当前环境配置的资源(屏幕密度，语言环境等)，同样在过滤构建资源阶段，有一个FilteredConfigGroup对象，提供快速查找。
 - 6.缓存BagID
-![Android资源体系的缓存.png](https://upload-images.jianshu.io/upload_images/9880421-1c62a2722ec6562c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Android资源体系的缓存.png](/images/Android资源体系的缓存.png)
 
 分析资源管理系统，可以总结出什么Android性能优化结论呢？
 > 1.包体积的优化，我们可以通过混淆资源文件，是的包体积变小。为什么呢？因为通过资源的混淆，就可以减少resource.arsc中字符串资源池的大小，从而缩小资源大小。

@@ -21,7 +21,7 @@ tags:
 
 
 在聊Handler之前，我先上一个Handler的设计图：
-![Handler.png](https://upload-images.jianshu.io/upload_images/9880421-b69b9433049f1bd2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Handler.png](/images/Handler.png)
 
 刚开始学习Android的我一开始看到这个设计的时候觉得很奇怪，为什么在Looper中一个死循环为什么不会卡死？按照道理这个线程在不断的执行一个函数就没有退出来过，应该是没有机会继续执行其他函数，为什么在我们的开发中能够正常相应呢？之后随着学习，终于明白其中的核心原理，本文就以这个问题，来探讨一下Handler大多没有人熟知的设计。
 

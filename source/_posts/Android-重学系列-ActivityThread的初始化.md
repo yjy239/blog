@@ -1148,7 +1148,7 @@ getPackageInfoNoCheck最后会调用getPackageInfo方法。
 ```
 
 在这个过程实际上做的事情就一件就是插件化一文中提到过的Android中ClassLoader的组成.
-![classloader.jpg](https://upload-images.jianshu.io/upload_images/9880421-4ded59650d522946.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![ClassLoader设计.jpg](/images/ClassLoader设计.jpg)
 
 在应用进程初期还不会存在Application ClassLoader对象。只有开始实例化Application的时候，才会装载Android应用独有的ClassLoader对象。还能看到，如果包名是系统的android开始，则不会加载应用的ClassLoader对象。
 
@@ -1321,7 +1321,7 @@ public class BaseDexClassLoader extends ClassLoader
 能看到会反射调用当前包名对应的R文件中onResourcesLoaded方法。如果我们翻开R.java是根本找不到这个方法的。只有当链接了资源共享库的R.java才会存在。
 
 为此，我翻阅了AS的打包工具aapt的源码，有机会可以尝试着详细的过一遍源码。这里先上一个资源R文件生成流程的时序图:
-![aapt R.java生成的工作流程.png](https://upload-images.jianshu.io/upload_images/9880421-39725768f786075a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![aapt R.java生成的工作流程.png](/images/aapt_R.java生成的工作流程.png)
 
 
 从上图可以得知，其核心逻辑如下：当aapt的main方法解析到p参数中引用的资源，将会调用doPackage，开始尝试的调用writeSymbolClass打包生成R.java文件，把每一个R文件中资源的int值赋值上。

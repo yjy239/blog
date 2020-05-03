@@ -60,7 +60,7 @@ public static Object getSystemService(ContextImpl ctx, String name) {
 能看到此时实际上WindowManager的interface是由WindowManagerImpl实现的。
 
 这里先上一个WindowManager的UML类图。
-![WindowManager.png](https://upload-images.jianshu.io/upload_images/9880421-f1e04dd40e0c438d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![WindowManager.png](/images/WindowManager.png)
 
 
 我们能够从这个UML图能够看到，其实所有的事情都委托给WindowManagerGlobal工作。因此我们只需要看WindowManagerGlobal中做了什么。
@@ -322,7 +322,7 @@ class Session extends IWindowSession.Stub implements IBinder.DeathRecipient
 ```
 很有趣的是，我们能够看到，按照道理我们需要添加窗体实例到WMS中。从逻辑上来讲，我们只需要做一次跨进程通信即可。但是为什么需要一个Session作为中转站呢？
 
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-0cb4e3ec93bd327e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Session设计.png](/images/Session设计.png)
 
 能够看到实际上Session(会话)做的事情不仅仅只有沟通WMS这么简单。实际上它还同时处理了窗口上的拖拽，输入法等逻辑，更加重要的是Session面对着系统多个服务，但是通过这个封装，应用程序只需要面对这个Sesion接口，真的是名副其实的"会话"。
 
@@ -849,7 +849,7 @@ WindowState(WindowManagerService service, Session s, IWindow c, WindowToken toke
 每当我们new了一个WindowToken，将会自动的根据此时窗口类型绑定到对应的区域的末尾。这个时候，当我们addWindow要添加WindowState的时候，将会根据这个句柄去查找WindowToken中的层级，插入到对应的层级中。
 
 用一幅图总结如下:
-![Window的层级插入.png](https://upload-images.jianshu.io/upload_images/9880421-3e28fcfa09643a1a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Window的层级插入.png](/images/Window的层级插入.png)
 
 ### 层级第二次计算
 经过上面的区域划分，把窗体大致上区分到了几个区域当中，并且有了大致的顺序，但是实际上，我们只是粗略的处理了Window。实际上在App应用中不是简单的摆好,我们在平时使用的时候并非如此。

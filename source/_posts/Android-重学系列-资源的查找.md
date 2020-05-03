@@ -350,7 +350,7 @@ uint32_t LoadedPackage::GetEntryOffset(const ResTable_type* type_chunk, uint16_t
 }
 ```
 能看到通过获取资源ResTable_type起始地址+ResTable_type的头部大小+头部起点地址，来找到entry偏移数组。
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-a7e0518f7050d9a3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![寻找Res_table_entry.png](/images/寻找Res_table_entry.png)
 通过偏移数组中的结果来确定当前的entry是否存在。
 
 
@@ -364,7 +364,7 @@ const ResTable_entry* LoadedPackage::GetEntryFromOffset(const ResTable_type* typ
 }
 ```
 因为在type中记录对应entry中数据的偏移量，因此，可以通过简单的相加找到对应的地址。
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-b13aa25eb03c6b6b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![寻找Res_table_entry2.png](/images/寻找Res_table_entry2.png)
 
 而entry当中就有一个Res_value对象.这个对象保存着真实的数据，最后会通过CopyValue的方法，把Res_value.data拷贝到TypeValue中。此时就拥有了当前资源真实数据。换到当前情景就是指，找到了布局文件,layout/xxx.xml字符串对应的index。
 

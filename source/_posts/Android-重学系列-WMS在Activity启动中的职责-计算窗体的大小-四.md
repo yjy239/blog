@@ -149,7 +149,7 @@ relayout的方法有点长，本次我们将关注这一部分核心的逻辑。
 ```
 能看到在这里面对performSurfacePlacementLoop做最多为6次的循环,这六次循环做什么呢？
 
-```
+```java
 private void performSurfacePlacementLoop() {
         ...
         mInLayout = true;
@@ -452,22 +452,23 @@ boolean updateFocusedWindowLocked(int mode, boolean updateInputWindows) {
 在正式开始聊窗体大小的测量之前，实际上，在Android系统中，为了把Window各个边界标记出来，实际上随着时代和审美潮流的演进，诞生越来越多的边距类型，我们往往可以通过这些边距来测定窗体的大小。
 
 在DisplayFrame中有了大致的分区，如下：
+
 type|描述
 -|-
-mOverScan|带有这个前后缀的边距名字代表着过扫描。过扫描是什么东西？实际上在我们在自己看自己的手机屏幕，会发现手机屏幕显示范围并未铺满全屏，而是留有一点黑色的边框。而这个黑色的部分就是就是过扫描区域。原因是如果把显示范围铺面全屏，如电视机之类的屏幕会导致失真。![过扫描区域.png](https://upload-images.jianshu.io/upload_images/9880421-f65560e20ea010f9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-mOverScanScreen|代表着显示屏真实宽高，是带上了过扫描的边距范围 ![image.png](https://upload-images.jianshu.io/upload_images/9880421-0bcceffbcad4259f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+mOverScan|带有这个前后缀的边距名字代表着过扫描。过扫描是什么东西？实际上在我们在自己看自己的手机屏幕，会发现手机屏幕显示范围并未铺满全屏，而是留有一点黑色的边框。而这个黑色的部分就是就是过扫描区域。原因是如果把显示范围铺面全屏，如电视机之类的屏幕会导致失真。![过扫描区域.png](/images/过扫描区域.png)
+mOverScanScreen|代表着显示屏真实宽高，是带上了过扫描的边距范围 ![OverScanScreen.png](/images/OverScanScreen.png)
 mRestrictedOverscan|类似OverScanScreen，适当的时候允许移动到OverScanScreen中
-mUnrestricted| 真实屏幕大小，但是不包含OverScan区域
-mRestricted | 当前屏幕大小;如果状态栏无法隐藏，则这些值可能不同于(0,0)-(dw,dh);在这种情况下，它有效地将显示区域从所有其他窗口分割出来。
-mSystem | 在布局期间，所有可见的SysytemUI元素区域
-mStable | 稳定不变的应用内容区域
-mStableFullscreen | 对于稳定不变的应用区域，但是这个Window是添加了FullScreen标志，这是除了StatusBar以外的区域
-mCurrent | 在布局期间，当前屏幕且带上键盘，状态栏的区域(虽然不好理解，但是如果是分屏和自由窗口模式就好理解了）
-mContent | 布局期间，向用户展示内容的所有区域，包括所有的外部装饰如状态来和键盘，一般和mCurrent一样，除非使用了嵌套模式，则会比mCurrent更大。
-mVoiceContent | 布局期间，我们声量变化时候的系统区域
-mDock | 输入法窗体区域
-mDisplayCutout | 刘海屏上面那一块的区域
-mDisplayCutoutSafe | 刘海屏不允许使用交叉部分![image.png](https://upload-images.jianshu.io/upload_images/9880421-3ff87b8dc4df7127.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+mUnrestricted|真实屏幕大小，但是不包含OverScan区域
+mRestricted|当前屏幕大小;如果状态栏无法隐藏，则这些值可能不同于(0,0)-(dw,dh);在这种情况下，它有效地将显示区域从所有其他窗口分割出来。
+mSystem|在布局期间，所有可见的SysytemUI元素区域
+mStable|稳定不变的应用内容区域
+mStableFullscreen|对于稳定不变的应用区域，但是这个Window是添加了FullScreen标志，这是除了StatusBar以外的区域
+mCurrent|在布局期间，当前屏幕且带上键盘，状态栏的区域(虽然不好理解，但是如果是分屏和自由窗口模式就好理解了）
+mContent|布局期间，向用户展示内容的所有区域，包括所有的外部装饰如状态来和键盘，一般和mCurrent一样，除非使用了嵌套模式，则会比mCurrent更大。
+mVoiceContent|布局期间，我们声量变化时候的系统区域
+mDock|输入法窗体区域
+mDisplayCutout|刘海屏上面那一块的区域
+mDisplayCutoutSafe|刘海屏不允许使用交叉部分![刘海屏不允许使用交叉部分.png](/images/刘海屏不允许使用交叉部分.png)
 
 
 可以看到，这些窗体的边距实际上是跟着这些年潮流走的。如Android 7.0的自由窗体模式，嵌套窗体模式，刘海屏等等，这些边距的共同作用，才会诞生一个真正的Window大小。有了这些基础知识之后，我们去看看测量大小的逻辑。

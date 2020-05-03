@@ -8,6 +8,7 @@ tag:
 description:
 author: yjy239
 summary:
+mathjax: true
 tags:
 - 音视频
 - OpenGL
@@ -25,30 +26,30 @@ tags:
 
 ## 向量
 向量最基本的定义是一个方向，往哪里走，走到哪里。更加正式的来说，向量包含一个方向一个大小，如下：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-6091b05997c09306.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![向量相加.png](/images/向量相加.png)
 
 这里有三个向量，能看到w，n，v都从各自的起点指向各自的终点，并且能够很轻易的算出其长度。
 
-一个向量可以表示：$\vec{a} = ( \begin{matrix} x\\ y \\z \end{matrix} )$
+一个向量可以表示：$\vec{a} = ( \begin{matrix} x\\\ y \\\ z \end{matrix} )$
 
 ### 向量的计算
 
 #### 向量加减
 向量加减，实际上就是对向量中每个分量进行加减
-$( \begin{matrix} 1\\ 2 \\3 \end{matrix} ) + x = ( \begin{matrix} 1+x\\ 2+x \\3+x \end{matrix} )$
+$( \begin{matrix} 1\\\ 2 \\\ 3 \end{matrix} ) + x = ( \begin{matrix} 1+x\\\ 2+x\\\ 3+x \end{matrix} )$
 
 向量之间的加：
-$(\begin{matrix} 1\\ 2 \\3 \end{matrix} ) + ( \begin{matrix} 4\\ 5 \\ 6 \end{matrix} )  = ( \begin{matrix} 1+4\\ 2+5 \\3+6 \end{matrix} )$
+$(\begin{matrix} 1\\\ 2 \\\ 3 \end{matrix} ) + ( \begin{matrix} 4\\\ 5 \\\ 6 \end{matrix} )  = ( \begin{matrix} 1+4\\\ 2+5 \\\ 3+6 \end{matrix} )$
 
 向量之间的加减在几何上意义如下：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-4a22ab27ddbe3266.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![向量相减.png](/images/向量相减.png)
 
 减法可以看成加一个负数：
-$( \begin {matrix} 1\\ 2 \\3 \end{matrix} ) + ( \begin{matrix} -4\\ -5 \\- 6 \end{matrix} )  =( \begin{matrix} 1\\ 2 \\3 \end{matrix} ) - ( \begin{matrix} 4\\ 5 \\ 6 \end{matrix} )  = ( \begin{matrix} 1-4\\ 2-5 \\3-6 \end {matrix} )$
+$( \begin {matrix} 1\\\ 2 \\\ 3 \end{matrix} ) + ( \begin{matrix} -4\\\ -5 \\\ - 6 \end{matrix} )  =( \begin{matrix} 1\\\ 2 \\\ 3 \end{matrix} ) - ( \begin{matrix} 4\\\ 5 \\\ 6 \end{matrix} )  = ( \begin{matrix} 1-4 \\\ 2-5 \\\ 3-6 \end {matrix} )$
 
 ### 向量的长度
 我们使用勾股定理(Pythagoras Theorem)来获取向量的长度(Length)/大小(Magnitude)。如果你把向量的x与y分量画出来，该向量会和x与y分量为边形成一个三角形：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-7056c3ceead66a35.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![向量长度.png](/images/向量长度.png)
 
 我们可以依据勾股定理把v向量的长度计算出来：
 $||v|| = \sqrt{x^{2} + y^2}$
@@ -62,10 +63,10 @@ $||v|| = \sqrt{x^{2} + y^2}$
 $\vec{v} \cdot \vec{k} = ||v|| \cdot  ||k|| \cdot cos\theta$
 
 如果用分量来表示其运算,就是每个分量之间相乘最后相加：
-$(\begin{matrix} 1\\ 2 \\3 \end{matrix} ) \cdot ( \begin{matrix} 3\\ 4 \\5 \end{matrix})  = (1*3)+(2*4)+(3*5)$
+$(\begin{matrix} 1\\\ 2 \\\ 3 \end{matrix} ) \cdot ( \begin{matrix} 3 \\\ 4 \\\ 5 \end{matrix})  = (1 * 3)+(2 * 4)+(3*5)$
 
 几何意义：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-9d42b5b108b92d11.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![向量的点乘.png](/images/向量的点乘.png)
 假设有两个向量a,b.如果这两个向量做点乘：
 $\vec{a} \cdot \vec{b} = ||a|| \cdot  (||b|| \cdot cos\theta)$
 因为点乘符合乘法交换律：可以扩起后面，能从涂上看到后面括号那部分实际上就是b在a上的投影，也就是上图的$a_{0}$。
@@ -78,14 +79,14 @@ $\vec{v} \times \vec{k} = ||v|| \times ||k|| \times sin\theta$
 
 如果用分量来计算的就是如下：
 假设有向量A和B，从左到右的排开每个向量的分量，每一行代表一个向量:
-$|\begin{matrix} x & y & z\\ A_{x} & A_{y} & A_{z} \\ B_{x} & B_{y} & B_{z} \end{matrix} |$
+$|\begin{matrix} x & y & z\\\ A_{x} & A_{y} & A_{z} \\\ B_{x} & B_{y} & B_{z} \end{matrix} |$
 
-$A \times B = ( \begin{matrix} A_{x}\\ A_{y} \\ A{z} \end{matrix} ) \times ( \begin{matrix} B_{x}\\ B_{y} \\ B_{z} \end{matrix} ) = ( \begin{matrix} A_{y} \times B_{z} - A_{z} \times B_{y} \\ A_{x} \times B_{z} - A{z} \times B_{x} \\ A_{x} \times B_{y} - A_{y} \times B_{x} \end{matrix} )$
+$A \times B = ( \begin{matrix} A_{x} \\\ A_{y} \\\ A{z} \end{matrix} ) \times ( \begin{matrix} B_{x}\\\ B_{y} \\\ B_{z} \end{matrix} ) = ( \begin{matrix} A_{y} \times B_{z} - A_{z} \times B_{y} \\\ A_{x} \times B_{z} - A{z} \times B_{x} \\\ A_{x} \times B_{y} - A_{y} \times B_{x} \end{matrix} )$
 
 实际上，我高中第一次学的时候，感觉不太好记叉乘。其实把上面那个行列式写出来，就很好记住了。计算那一列的数据，就获取另外两列分量，做交叉相乘以及相减。
 
 几何上的意义：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-6bee950211c436b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![向量的叉乘.png](/images/向量的叉乘.png)
 
 从上图能够明白实际上向量a叉乘b，就是找一个向量同时垂直于向量a和向量b的向量。实际上这个向量就是垂直于a和b构成的平面。
 
@@ -97,8 +98,7 @@ $A \times B = ( \begin{matrix} A_{x}\\ A_{y} \\ A{z} \end{matrix} ) \times ( \be
  $$  
   \left[
  \begin{matrix}
-   1 & 2 & 3 \\
-   4 & 5 & 6 
+   1 & 2 & 3 \\\ 4 & 5 & 6 
   \end{matrix}
   \right] 
 $$ 
@@ -107,23 +107,23 @@ $$
 ### 矩阵的加减法
 矩阵和标量相加
  $$ \left[\begin{matrix}
-   1 & 2 & 3 \\
-   4 & 5 & 6 
+   1 & 2 & 3
+\\\ 4 & 5 & 6 
   \end{matrix} \right]  +3 = \left[\begin{matrix}
-   1+3 & 2+3 & 3+3 \\
-   4+3 & 5+3 & 6+3 
+   1+3 & 2+3 & 3+3 
+\\\   4+3 & 5+3 & 6+3 
   \end{matrix} \right] $$ 
 
 矩阵之间相加，必须是矩阵行列数相等才能互相相加：
  $$ \left [\begin{matrix}
-   1 & 2 & 3 \\
-   4 & 5 & 6 
+   1 & 2 & 3 
+\\\   4 & 5 & 6 
   \end{matrix} \right]  + \left[\begin{matrix}
-   1 & 2 & 3 \\
-   4 & 5 & 6 
+   1 & 2 & 3 
+\\\   4 & 5 & 6 
   \end {matrix} \right]  = \left[\begin{matrix}
-   1+1 & 2+2 & 3+3 \\
-   4+4 & 5+5 & 6+6
+   1+1 & 2+2 & 3+3 
+\\\   4+4 & 5+5 & 6+6
   \end{matrix} \right] $$ 
 
 减法也是类似。
@@ -134,11 +134,11 @@ $$
 #### 数乘
 矩阵和标量相乘,矩阵与标量之间的乘法也是矩阵的每一个元素分别乘以该标量
  $$ \left [\begin{matrix}
-   1 & 2 & 3 \\
-   4 & 5 & 6 
+   1 & 2 & 3 
+\\\   4 & 5 & 6 
   \end{matrix} \right] \cdot 3 = \left[\begin{matrix}
-   1 \cdot 3 & 2 \cdot 3 & 3 \cdot 3 \\
-   4 \cdot 3 & 5 \cdot 3 & 6 \cdot3
+   1 \cdot 3 & 2 \cdot 3 & 3 \cdot 3 
+\\\   4 \cdot 3 & 5 \cdot 3 & 6 \cdot3
   \end{matrix} \right] $$ 
 
 现在我们也就能明白为什么这些单独的数字要叫做标量(Scalar)了。简单来说，标量就是用它的值缩放(Scale)矩阵的所有元素
@@ -150,18 +150,18 @@ $$
 2.矩阵相乘不遵守交换律(Commutative)，也就是说A⋅B≠B⋅A。
 
 直接来看矩阵相乘的例子：
- $$ \left[\begin{matrix}
-   1 & 2 \\
-   3 & 4
-  \end{matrix} \right] \cdot \left[\begin{matrix}
-   5 & 6  \\
-   7 & 8
+ $$ \left [\begin{matrix}
+   1 & 2 
+\\\   3 & 4
+  \end{matrix}\right] \cdot \left[\begin{matrix}
+   5 & 6  
+\\\   7 & 8
   \end{matrix} \right]  = \left[\begin{matrix}
-   1*5+2*7 & 1*6+2*8 \\
-   3*5+4*7 & 3*6+4*8
-  \end{matrix} \right] $$ 
+   1 * 5+2 * 7 & 1 * 6+2 * 8 
+ \\\  3 * 5+4 * 7 & 3 * 6+4 * 8
+  \end{matrix}\right] $$ 
 
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-1a81b74cd307518c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![矩阵间相乘.png](/images/矩阵间相乘.png)
 实际上计算过程就是矩阵的第1个元素就是第一行乘以第一列每个元素积的和。扩展一下就是如下公式：
 $(AB)_{ij} = \sum_{k=1}^{p} a_{ik}b_{jk}$
 
@@ -174,10 +174,10 @@ $(AB)_{ij} = \sum_{k=1}^{p} a_{ik}b_{jk}$
  $$  
   \left[
  \begin{matrix}
-   1 & 0 & 0 & 0\\
-   0 & 1 & 0 & 0 \\
-   0 & 0 & 1 & 0 \\
-    0 & 0 & 0 & 1
+   1 & 0 & 0 & 0
+\\\  0 & 1 & 0 & 0
+\\\   0 & 0 & 1 & 0
+\\\    0 & 0 & 0 & 1
   \end {matrix}
   \right] 
 $$ 
@@ -187,7 +187,7 @@ $$
 对一个向量进行缩放(Scaling)就是对向量的长度进行缩放，而保持它的方向不变。由于我们进行的是2维或3维操作，我们可以分别定义一个有2或3个缩放变量的向量，每个变量缩放一个轴(x、y或z)。
 
 假如我们尝试缩放$\vec{v} = (3,2)$,沿着x轴方向缩小0.5倍数，沿着y轴放大2倍。
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-08cc392d3b6365a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![缩放例子.png](/images/缩放例子.png)
 
 由于OpenGL通常在3d空间内操作，那么我们只要把z轴缩放设置为1就没有任何影响。
 
@@ -197,21 +197,21 @@ $$
  $$  
   \left[
  \begin{matrix}
-   Sx & 0 & 0 & 0\\
-   0 & Sx & 0 & 0 \\
-   0 & 0 & Sz & 0 \\
-    0 & 0 & 0 & 1
+   Sx & 0 & 0 & 0
+\\\   0 & Sx & 0 & 0 
+\\\   0 & 0 & Sz & 0 
+\\\    0 & 0 & 0 & 1
   \end{matrix}
   \right] \cdot \left[\begin{matrix}
-   x  \\
-   y  \\ 
-  z \\
-1
+  x  
+\\\   y  
+\\\  z 
+\\\ 1
   \end{matrix} \right] = \left[\begin{matrix}
-   x \cdot Sx  \\
-   y  \cdot Sy \\ 
-  z  \cdot Sz \\
-1
+   x \cdot Sx  
+\\\    y  \cdot Sy 
+\\\  z  \cdot Sz 
+\\\ 1
   \end{matrix} \right]
 $$ 
 
@@ -224,21 +224,21 @@ $$
  $$  
   \left [
  \begin{matrix}
-   1 & 0 & 0 & Tx\\
-   0 & 1 & 0 & Ty \\
-   0 & 0 & 1 & Tz \\
-    0 & 0 & 0 & 1
+   1 & 0 & 0 & Tx
+\\\   0 & 1 & 0 & Ty 
+\\\   0 & 0 & 1 & Tz 
+\\\    0 & 0 & 0 & 1
   \end {matrix}
   \right] \cdot \left[\begin{matrix}
-   x  \\
-   y  \\ 
-  z \\
-1
+   x  
+\\\   y  
+\\\  z 
+\\\ 1
   \end{matrix} \right] = \left[\begin{matrix}
-   x +Tx  \\
-   y  + Ty \\ 
-  z  + Tz \\
-1
+   x +Tx  
+\\\   y  + Ty 
+\\\  z  + Tz 
+\\\ 1
   \end{matrix} \right]
 $$ 
 
@@ -267,27 +267,27 @@ $z1 * z2 =ac + adi + cbi + bdi^2 = (ac - bd)+(ad + cb)i$
 $$  
   \left[
  \begin{matrix}
-   a & -b \\
-   b & a\\ 
+   a & -b 
+\\\   b & a
   \end{matrix}
   \right] \cdot \left[\begin{matrix}
-   c  \\
-   d
+   c  
+\\\   d
   \end{matrix} \right]
 $$ 
 
 就不难看出，实际上复数的元算就是对 下面这个矩阵做变换运算$$  
   \left[
  \begin{matrix}
-   a & -b \\
-   b & a\\ 
+   a & -b 
+\\\   b & a
   \end{matrix}
   \right]
 $$ 
 
 ### 旋转的证明
 先给出一个复数在复平面中表现：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-1bc258a43270a4a9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![复数在旋转中.png](/images/复数在旋转中.png)
 
 能看到在这个复平面中复数z的表示就是$z = a + bi$，这个向量的长度根据勾股定理很容易就求出来。
 
@@ -295,8 +295,8 @@ $$
 $$  
   \sqrt{a^2 + b^2} \cdot \left[
  \begin{matrix}
-   a / \sqrt{a^2 + b^2}& -b / \sqrt{a^2 + b^2} \\
-   b / \sqrt{a^2 + b^2} & a / \sqrt{a^2 + b^2}\\ 
+   a / \sqrt{a^2 + b^2}& -b / \sqrt{a^2 + b^2} 
+\\\   b / \sqrt{a^2 + b^2} & a / \sqrt{a^2 + b^2}
   \end{matrix}
   \right] 
 $$ 
@@ -305,8 +305,8 @@ $$
 $$  
   \sqrt{a^2 + b^2} \cdot \left[
  \begin{matrix}
-   cos(\theta) & -sin(\theta) \\
-   sin(\theta) & cos(\theta)\\ 
+   cos(\theta) & -sin(\theta) 
+\\\   sin(\theta) & cos(\theta)
   \end{matrix}
   \right] 
 $$ 
@@ -319,8 +319,8 @@ $$
 $$  
   ||z|| \cdot \left[
  \begin{matrix}
-   cos(\theta) & -sin(\theta) \\
-   sin(\theta) & cos(\theta)\\ 
+   cos(\theta) & -sin(\theta) \\\
+   sin(\theta) & cos(\theta)\\\ 
   \end{matrix}
   \right] 
 $$ 
@@ -329,23 +329,23 @@ $$
 $$  
   ||z|| \cdot\left[
  \begin{matrix}
-   1 & 0 \\
-   0 & 1\\ 
+   1 & 0 
+\\\   0 & 1
   \end {matrix}
   \right] \cdot\left[
  \begin{matrix}
-   cos(\theta) & -sin(\theta) \\
-   sin(\theta) & cos(\theta)\\ 
+   cos(\theta) & -sin(\theta) 
+\\\   sin(\theta) & cos(\theta)
   \end {matrix}
   \right] = \left[
  \begin{matrix}
-   ||z|| & 0 \\
-   0 & ||z||\\ 
+   ||z|| & 0 
+\\\   0 & ||z||
   \end{matrix}
   \right] \cdot\left[
  \begin{matrix}
-   cos(\theta) & -sin(\theta) \\
-   sin(\theta) & cos(\theta)\\ 
+   cos(\theta) & -sin(\theta) 
+\\\   sin(\theta) & cos(\theta)
   \end{matrix}
   \right] 
 $$ 
@@ -354,23 +354,23 @@ $$
 $$  
  \left[
  \begin{matrix}
-   ||z|| & 0 \\
+   ||z|| & 0 \\\
    0 & ||z||\\ 
   \end{matrix}
   \right] \cdot\left[
  \begin{matrix}
-   cos(\theta) & -sin(\theta) \\
+   cos(\theta) & -sin(\theta) \\\
    sin(\theta) & cos(\theta)\\ 
   \end{matrix}
   \right] \cdot  \left[
  \begin{matrix}
-   0  \\
-   1 \\ 
+   0  
+ \\\  1 
   \end{matrix}
   \right] = \left[
  \begin{matrix}
-   -||z||sin(\theta)  \\
-   ||z||cos(\theta) \\ 
+   -||z||sin(\theta)  
+\\\   ||z||cos(\theta)
   \end{matrix}
   \right]
 $$ 
@@ -378,43 +378,43 @@ $$
 $$  
  \left[
  \begin{matrix}
-   ||z|| & 0 \\
-   0 & ||z||\\ 
+   ||z|| & 0 
+\\\   0 & ||z||
   \end{matrix}
   \right] \cdot\left[
  \begin{matrix}
-   cos(\theta) & -sin(\theta) \\
-   sin(\theta) & cos(\theta)\\ 
+   cos(\theta) & -sin(\theta) 
+\\\   sin(\theta) & cos(\theta)
   \end{matrix}
   \right] \cdot  \left[
  \begin{matrix}
-   1  \\
-   0 \\ 
+   1  
+\\\ 0  
   \end{matrix}
   \right] = \left[
  \begin{matrix}
-   ||z||cos(\theta)  \\
-   ||z||sin(\theta) \\ 
+   ||z||cos(\theta)  
+\\\   ||z||sin(\theta)
   \end{matrix}
   \right]
 $$ 
 
 当复平面上的z长度为1时候，如下图：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-7b5bf09356a80a8b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![z长度为1.png](/images/z长度为1.png)
 
 因此下面这个矩阵是旋转时候的缩放矩阵：
 $$\left[
  \begin{matrix}
-   ||z|| & 0 \\
-   0 & ||z||\\ 
+   ||z|| & 0 
+\\\   0 & ||z||
   \end{matrix}
   \right] $$
 
 下面这个是旋转矩阵：
 $$\left[
  \begin{matrix}
-   cos(\theta) & -sin(\theta) \\
-   sin(\theta) & cos(\theta)\\ 
+   cos(\theta) & -sin(\theta) 
+\\\   sin(\theta) & cos(\theta)
   \end{matrix}
   \right] $$
 
@@ -426,21 +426,21 @@ $||z||(cos(\theta) - sin(\theta) i)$
  $$  
   \left[
  \begin{matrix}
-   1 & 0 & 0 & 0\\
-   0 & cos(\theta) & -sin(\theta)  & 0 \\
-   0 & sin(\theta) & cos(\theta) & 0 \\
-    0 & 0 & 0 & 1
+   1 & 0 & 0 & 0
+\\\   0 & cos(\theta) & -sin(\theta)  & 0 
+\\\   0 & sin(\theta) & cos(\theta) & 0 
+\\\    0 & 0 & 0 & 1
   \end{matrix}
   \right] \cdot \left[\begin{matrix}
-   x  \\
-   y  \\ 
-  z \\
-1
+   x  
+\\\   y  
+\\\  z 
+\\\ 1
   \end{matrix} \right] = \left[\begin{matrix}
-   x   \\
-   cosθ⋅y−sinθ⋅z \\ 
-  sinθ⋅y+cosθ⋅z\\
-1
+   x   
+\\\   cosθ⋅y−sinθ⋅z 
+\\\  sinθ⋅y+cosθ⋅z
+\\\ 1
   \end{matrix} \right]
 $$ 
 
@@ -448,21 +448,21 @@ $$
  $$  
   \left[
  \begin{matrix}
-   cos(\theta)  & 0 & -sin(\theta) & 0\\
-   0 & 1& 0  & 0 \\
-   sin(\theta) & 0 & cos(\theta) & 0 \\
-    0 & 0 & 0 & 1
+   cos(\theta)  & 0 & -sin(\theta) & 0
+\\\   0 & 1& 0  & 0 
+\\\   sin(\theta) & 0 & cos(\theta) & 0 
+\\\    0 & 0 & 0 & 1
   \end{matrix}
   \right] \cdot \left[\begin{matrix}
-   x \\
-   y  \\ 
-  z \\
-1
+   x 
+\\\   y   
+\\\  z 
+\\\ 1
   \end{matrix} \right] = \left[\begin{matrix}
-   cosθ⋅x+sinθ⋅z  \\
-   y   \\ 
-  −sinθ⋅x+cosθ⋅z \\
-1
+   cosθ⋅x+sinθ⋅z  
+\\\   y   
+\\\  −sinθ⋅x+cosθ⋅z 
+\\\ 1
   \end{matrix} \right]
 $$ 
 
@@ -470,21 +470,21 @@ $$
  $$  
   \left[
  \begin{matrix}
-   cos(\theta)  & -sin(\theta) & 0  & 0\\
-   sin(\theta)&  cos(\theta)&0& 0 \\
-    0 & 0 & 0 & 0 \\
-    0 & 0 & 0 & 1
+   cos(\theta)  & -sin(\theta) & 0  & 0
+\\\   sin(\theta)&  cos(\theta)&0& 0 
+\\\    0 & 0 & 0 & 0 
+\\\    0 & 0 & 0 & 1
   \end {matrix}
   \right] \cdot \left[\begin{matrix}
-   x \\
-   y  \\ 
-  z \\
-1\\
+   x 
+\\\   y  
+\\\  z 
+\\\ 1
   \end{matrix} \right] = \left[\begin{matrix}
-   cosθ⋅x-sinθ⋅y  \\
-   sinθ⋅x+cosθ⋅y  \\ 
-  z \\
-1
+   cosθ⋅x-sinθ⋅y  
+\\\   sinθ⋅x+cosθ⋅y  
+\\\  z 
+\\\ 1
   \end{matrix} \right]
 $$ 
 
@@ -493,13 +493,13 @@ $$
 换句话说就是，$R_{复合旋转} = R_{x} \cdot R_{y} \cdot R_{z}$
 
 因此可以得到如下这个复合矩阵：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-9285cd4eca2ba823.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![旋转复合矩阵.png](/images/旋转复合矩阵.png)
 
 是不是很讨厌，很麻烦。更麻烦的在后面，这种基于欧拉角变换的旋转很容易就出现了万向节死锁。如果是做游戏动画的人一定对这个不陌生。
 
 使用这种方式连续变换的时候，当出现x,y,z其中两个坐标系在同一水平面时候，另外一个轴的旋转范围就被限制住了。
 如下：
-![万向节死锁.gif](https://upload-images.jianshu.io/upload_images/9880421-b884fb2872ebb933.gif?imageMogr2/auto-orient/strip)
+![万向节死锁.gif](/images/万向节死锁.gif)
 
 
 如何解决呢？这个时候就需要四元数了。本文将不涉及四元数，因此不做更多的详解，后面将会和大家聊聊。不过记住了，上面引入复数进行推到旋转公式的方式将会运用到四元数的推导中。本文先做一个铺垫。
@@ -602,7 +602,7 @@ void rotationZ(GLfloat dst[4][4],GLfloat src[4][4],double degree){
 ```
 读取uniform，并且把变换之后的矩阵首地址赋值给transform。由于GLSL中也是4维float型矩阵，刚好能够正常解析。
 
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-29e5ff541eb99769.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![旋转笑脸结果2.png](/images/旋转笑脸结果2.png)
 
 这样就能看到了沿着x，y轴缩小了一般，同时沿着z轴顺时针旋转了90度。
 
@@ -635,7 +635,7 @@ scale缩放的api需要传入一个向量，分别指的是x,y,z轴分别缩小�
 此时是沿着z轴，倍数为1的旋转。缩放为x，y缩小一般，轴不变
 
 这样就有如此结果
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-87795e03a6d3b609.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![旋转笑脸结果1.png](/images/旋转笑脸结果1.png)
 
 诶？奇怪了？怎么根据公式计算出来的是相反的呢？一个顺时针旋转了90度，一个逆时针旋转了90度。
 
@@ -713,7 +713,7 @@ trans = glm::rotate(trans, glm::radians(90.0f),glm::vec3(0.0,0.0,-1.0));
         });
 ```
 如下：
-![旋转笑脸.gif](https://upload-images.jianshu.io/upload_images/9880421-0872a22931ea5cc5.gif?imageMogr2/auto-orient/strip)
+![旋转笑脸.gif](/images/旋转笑脸.gif)
 
 如果我们把旋转和位移的顺序变换了，会如何？
 ```
@@ -728,7 +728,7 @@ trans = glm::rotate(trans, glm::radians(90.0f),glm::vec3(0.0,0.0,-1.0));
             glUniformMatrix4fv(transformLoc,1,GL_FALSE,glm::value_ptr(trans));
 ```
 如下：
-![旋转笑脸2.gif](https://upload-images.jianshu.io/upload_images/9880421-f900116d0aa5d65c.gif?imageMogr2/auto-orient/strip)
+![旋转笑脸2.gif](/images/旋转笑脸2.gif)
 
 为什么会这样，原本我们把整个笑脸绘制在原点区域，先位移到左下角再旋转现象和我们料想的一样。
 
@@ -777,7 +777,7 @@ engine->loop(VAO, VBO, texture, 1,shader, [](Shader* shader,GLuint VAO,
             
         });
 ```
-![旋转笑脸3.gif](https://upload-images.jianshu.io/upload_images/9880421-15967066cecbcd38.gif?imageMogr2/auto-orient/strip)
+![旋转笑脸3.gif](/images/旋转笑脸3.gif)
 
 ## 总结
 本文只是介绍了一部分基础的矩阵变换知识。实际上，要深刻的理解计算机图形学，线性数学是一个很重要的工具。你可以看到我之前写的那一篇人工智能梯度下降推导，矩阵在计算机领域中是一个很基础且通用工具。不求掌握精通，但是至少能够各种熟悉操作，才能让我们的学习更加轻松。

@@ -245,7 +245,7 @@ void setFieldFlag_7_0(JNIEnv* env, jobject field) {
 ```
 这一段代码的意义就有点特殊，本质上是要把当前的属性全部转化为public的方法
 这里涉及到ArtField access_flags_的含义:
-- 1. ACC_PUBLIC 0x0001
+- 1.ACC_PUBLIC 0x0001
 - 2.ACC_PRIVATE 0x0002
 - 3.ACC_PROTECTED 0x0004
 - 4.ACC_STATIC 0x0008
@@ -302,7 +302,7 @@ void replace_7_0(JNIEnv* env, jobject src, jobject dest) {
 可以看到，实际上对于虚拟机来说，所有的方法都是ArtMethods。此时传递进来补丁包中的方法，和原来class中的方法，把方法的指针指向补丁包就完成了修复方法中的内容。
 
 实际上其思想很简单,如下图所示：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-d2283459c8d007f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![AndFix原理.png](/images/AndFix原理.png)
 
 
 那么确定就很明显了，为什么AndFix的兼容性这么差。很大的原因是，自己拷贝了ArtMethod的结构体，让方法强转为这个对象之后，把结构体里面的内容替换了。但是别忘了这是开源的，万一厂商修改了这个结构体，那就前功尽弃了。
@@ -318,7 +318,7 @@ void replace_7_0(JNIEnv* env, jobject src, jobject dest) {
 ## Tinker
 Tinker作为腾讯重磅推出的热修复框架自然有其道理，因为它不想AndFix一样，大量的机型不适配。为了避免出现AndFix的问题，Tinker并没有采用AndFix一样热替换的思路，而是使用冷启动修复的方式。
 这里有一张神图
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-0785669ab5f8f616.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![热修复方案.png](/images/热修复方案.png)
 这里面显示了世面上热修复支持的功能，以及涉及到的技术。
 
 接下来就以Tinker为例子聊聊，现在热修复的原理。然而我将不会过于详细解读源码，因为很多技术都是在我的插件化框架中已经聊过了。
@@ -340,7 +340,7 @@ Tinker 修复工程中的资源文件的执行者
 Tinker 修复工程中so的执行者。
 
 这些角色分别对应上图中热修复几个的功能模块。接下来我们将围绕着这几个角色解析源码。作为总览先给出这几个类关系的UML的图。
-![Tinker Loader.png](https://upload-images.jianshu.io/upload_images/9880421-9b91d34239ed68bc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Tinker_Loader.png](/images/Tinker_Loader.png)
 
 能看到的是TinkerLoader是通过tryLoad的方法来对每一种修复对应的Loader进行检测执行。
 
@@ -677,7 +677,7 @@ is_remove_new_version=0
 
 而这个version是做什么用的呢？在tinker中会管理各种各样的补丁包，而决定去修复什么补丁包，就是由这个version决定去下面哪个版本的文件夹获取对应的补丁包。
 
-![补丁包的管理目录](https://upload-images.jianshu.io/upload_images/9880421-54cc84a4b4307686.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![补丁包的管理目录.png](/images/补丁包的管理目录.png)
 能看到是取出version的头8位作为标识判断，按照上述代码逻辑，一般情况是按照patch.info获取new的字段中的补丁包。
 
 - 3.获取ShareSecurityCheck 对象。使用checkTinkerPackage检测在asset文件夹中的配置文件。
@@ -697,9 +697,9 @@ classes.dex,,1bfeb65ee027efc48c86443d52f98595,1bfeb65ee027efc48c86443d52f98595,7
 test.dex,,56900442eb5b7e1de45449d0685e6e00,56900442eb5b7e1de45449d0685e6e00,0,0,0,jar
 ```
 需要合并的dex文件名，实际上是对应下图的这些
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-2f0af2b981d470ab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![补丁dex.png](/images/补丁dex.png)
 
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-8db45800e5518afa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![补丁odex.png](/images/补丁odex.png)
 
 能看到的是，在这一步也仅仅只是校验文件中的dex文件是否合法以及读取里面的内容，因为在打补丁jar包的时候，tinker会生成一个rsa不对称的秘钥，会在这个checkSignatureAndTinkerID中进行一次校验。
 
@@ -809,8 +809,8 @@ res/drawable-ldrtl-mdpi-v4/abc_ic_ab_back_mtrl_am_alpha.png
 ```
 
 会获取这个配置文件中的第三个参数作为MD5，进行校验基准。校验成功后，会获取对应的资源文件夹。
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-d038df423925f767.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-chakan
+![资源补丁.png](/images/资源补丁.png)
+
 查看这个资源补丁包是否合法。最后再调用isResourceCanPatch，初始化资源修复的环境。
 
 初始化资源的修复环境可以看看我一年前写的插件化基础框架一文中，Small修复资源文件的部分。

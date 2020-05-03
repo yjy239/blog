@@ -590,7 +590,7 @@ native_renderCanvas(JNIEnv *env, jobject thiz, jobject bitmap) {
 ```
 
 AndroidBitmap_getInfo获取bitmap中所有的信息。接着通过lock方法，把pixel的像素指针给关联起来，最后通过绘制背景和文字在SKCanvas上，呈现出一个Hello Skia方法。
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-925f11d965db2b6e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Hello_Skia.png](/images/Hello_Skia.png)
 
 
 ### Skia基于Surface绘制
@@ -768,7 +768,7 @@ readPixels 第一个参数是ImageInfo，图像信息;第二个是像素集合;�
 
 能看到，我们同样是生成一个新的SkCanvas，把图像和文字绘制到上面，最后读取所有的像素点，并且把像素点的数据传送出去。
 
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-42a5e7889c4a9a57.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Skia绘制异常.png](/images/Skia绘制异常.png)
 
 这是怎么回事？为什么文字都变形了？？看起来整个文字被压缩了。当我放大整个显示范围时候，发现整个文字向右边倒下去了，并且被压缩了。
 
@@ -784,7 +784,7 @@ readPixels 第一个参数是ImageInfo，图像信息;第二个是像素集合;�
 background->readPixels(imageInfo,buffer->bits,bpr,0,0);
 ```
 如下图：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-91f1d1381d23941e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Hello_Skia_Surface.png](/images/Hello_Skia_Surface.png)
 
 
 

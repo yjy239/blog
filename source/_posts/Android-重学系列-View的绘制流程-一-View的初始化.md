@@ -312,10 +312,10 @@ View的绘制流程这一篇文章其实十分不好写，因为在网上已经�
 最后找到这个id为content的内容区域返回回去。
 
 这样我们就知道网上那个Android的显示区域划分图是怎么来的。
-![Android显示View的构成.png](https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy85ODgwNDIxLTFlM2VkNTQwM2ViN2U1NDMucG5n?x-oss-process=image/format,png)
+![Android显示View的构成.png](/images/Android显示View的构成.jpeg)
 
 如果我们把对象考虑进来大致上是如此：
-![对象包含图.png](https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy85ODgwNDIxLWRhY2E0ZmU0ODA2YmU0N2IucG5n?x-oss-process=image/format,png)
+![对象包含图.png](/images/对象包含图.jpeg)
 
 
 ### LayoutInflater.inflate实例化所有内容视图
