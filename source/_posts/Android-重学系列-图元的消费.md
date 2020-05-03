@@ -28,7 +28,7 @@ tags:
 # 正文
 让我们先来回忆一下，在[图元缓冲队列初始化](https://www.jianshu.com/p/a2b5f82cf75f)一文中曾经总结的UML图。
 
-![Layer与缓冲队列的设计.png](https://upload-images.jianshu.io/upload_images/9880421-51b5def9207d2da4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Layer与缓冲队列的设计.png](/images/Layer与缓冲队列的设计.png)
 
 
 

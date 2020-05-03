@@ -1,7 +1,7 @@
 ---
 title: Android 重学系列 SurfaceFlinger的概述
-top: false
-cover: false
+top: true
+cover: true
 date: 2019-12-08 18:06:59
 img:
 tag:

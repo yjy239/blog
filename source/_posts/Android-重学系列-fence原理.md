@@ -26,7 +26,7 @@ MSMFB_BUFFER_SYNC 这个命令是对应上高通的fb驱动自己实现的同步
 drm(Direct Rendering Manager)驱动是什么？顾名思义，直接渲染控制器，基于dma-buf。为了取代直接复杂的fb驱动通信，当前Linux主流显示框架下，引入了一个新的内核模块，名为drm驱动。原来的fb内核模块，不支持dma-buf，多层图层合成等。而这些问题都会在drm中统一对GPU和Display驱动模块进行管理，是的面向硬件的编程变得统一化。
 
 用一幅wiki上的一副图来表示：
-![drm.png](https://upload-images.jianshu.io/upload_images/9880421-9d5b3d92fb8ed555.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![drm.png](/images/drm.png)
 
 能看到整个drm中，大致分为三个模块：
 - 1.面向用户空间的libdrm
@@ -229,7 +229,7 @@ void sync_timeline_debug_add(struct sync_timeline *obj)
 
 ## hrm_hwcomposer 渲染中的同步栅参与的操作
 经过前文的阅读，就能知道在渲染的时候，对应的方法是上面hwc_set方法。这里我们只关注其fence参与的核心事件。
-```
+```cpp
 static int hwc_set(hwc_composer_device_1_t *dev, size_t num_displays,
                    hwc_display_contents_1_t **sf_display_contents) {
   struct hwc_context_t *ctx = (struct hwc_context_t *)&dev->common;
@@ -426,7 +426,7 @@ out:
 回过头来，我们纵览全局。还记得Binder驱动中，所有的进程唤起Binder的执行操作都是从一个线程池中唤起，执行任务的。等到了SF进行GraphicBuffer queue入队之后，通过Handler归于SF的主线程中。
 
 那么其实整个流程大致是如下的：
-![SF多应用消费模型.png](https://upload-images.jianshu.io/upload_images/9880421-636d57f839f39d34.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![SF多应用消费模型.png](/images/SF多应用消费模型.png)
 
 
 既然渲染的方法是耗时的，那么必定存在需要同步的事件，不允许那些正在渲染到屏幕的GraphicBuffer遭到修改，导致屏幕渲染出现割裂等问题。这个时候就轮到fence登场了。
@@ -1077,7 +1077,7 @@ static void fence_check_cb_func(struct fence *f, struct fence_cb *cb)
 
 ## 小结
 用一幅图总结整个fence在内核中的设计：
-![fence时间轴设计.png](https://upload-images.jianshu.io/upload_images/9880421-25cb3072c8cd3c10.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![fence时间轴设计.png](/images/fence时间轴设计.png)
 
 
 至此fence的阻塞唤醒原理已经明白了。但是仅仅如此，我们只需要一个fence就好，只需要等待在屏幕渲染之前，以及屏幕渲染之后即可，无论有多少线程来了，我们都可以进行poll的阻塞，等到drm渲染屏幕结束。这样能够处理解耦合，为什么需要嵌入到SF的图元合成渲染流程中呢？
@@ -1393,7 +1393,7 @@ status_t BufferQueueProducer::queueBuffer(int slot,
 其实这就是为了处理OpenGL es绘制和CPU绘制每一帧花费的时间不同，一般的OpenGL es都是借助GPU进行绘制，因此会快上很多。后面有提到，Android希望每一帧都卡在16.6ms左右也就是60fps中，如果GPU太快，而CPU太慢就会出现因为GPU太快导致SF刷新的频率过高，从而使得性能消耗过大。
 
 如下图：
-![SF的queueBuffer fence逻辑.png](https://upload-images.jianshu.io/upload_images/9880421-40da4fb115aa9608.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![SF的queueBuffer_fence逻辑.png](/images/SF的queueBuffer_fence逻辑.png)
 
 
 这就是源码注解中，为什么Google经过权衡之后，偏向选择牺牲SF的吞吐量从而降低刷新频率的原因。
@@ -1633,7 +1633,7 @@ err:
 - 2.不管是哪一种，由于fence的序列是基于同一个sync_timeline为基准不断的单调递增的。因此可以简单通过同步点的大小，找出每一个fence此时对应的时间点顺序。把没有达到释放时间的fence全部合并起来，变成一个fence_array。
 
 这个唤醒逻辑如下：
-![fence merge.png](https://upload-images.jianshu.io/upload_images/9880421-f8df7c75941dd0bd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![fence_merge.png](/images/fence_merge.png)
 
 
 当进行了OpenGL es和CPU的fencemerge之后，我们可以看updateTexImage中bindTextureImageLocked的逻辑。
@@ -1776,7 +1776,7 @@ sync_timeline 作为内核记录已经渲染屏幕多少个时间点，每一次
 能看到实际上这个过程其实有点像Java中的CyclicBarrier，不过比他灵活多了。关于图，我已经在上文已经画过了，接下来让我们重点关注fence在SurfaceFlinger中的状态流转。
 
 先来看看GraphicBuffer中在SF的状态流转
-![GraphicBuffer状态流转.png](https://upload-images.jianshu.io/upload_images/9880421-4a996990a9668c01.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![GraphicBuffer状态流转.png](/images/GraphicBuffer状态流转.png)
 
 接着再来看看fence在整个SF中各个流程中担当了什么角色：
 ### dequeueBuffer GraphicBuffer的从SF出队到app进行绘制流程中
@@ -1806,7 +1806,7 @@ sync_timeline 作为内核记录已经渲染屏幕多少个时间点，每一次
 做的事情很简单，就是一件事情。把GraphicBuffer对应的索引放入mFreeSlots集合中等待是dequeue使用，同时把fence只是名字上转化为release状态。
 
 最后老规矩，我们用一幅图总结：
-![fence转化流程图.png](https://upload-images.jianshu.io/upload_images/9880421-baacd4a1db6367dd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![fence转化流程图.png](/images/fence转化流程图.png)
 
 
 实际上，总结一句话，Fence的acquire状态其实是阻塞什么时候可以被消费，什么时候可以被渲染到屏幕；而Fence的release状态则是控制什么时候可以出队给应用进行绘制，什么时候可以被映射到内存。

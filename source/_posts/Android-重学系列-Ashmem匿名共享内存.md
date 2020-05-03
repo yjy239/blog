@@ -366,7 +366,7 @@ static void Memory_pokeByteArray(JNIEnv* env, jclass, jlong dstAddress, jbyteArr
 
 ```
 如下就是示意图：
-![DirectByteBuffer.png](https://upload-images.jianshu.io/upload_images/9880421-43aa56c0af24b21f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![DirectByteBuffer.png](/images/DirectByteBuffer.png)
 
 
 ## MemoryFile读取数据
@@ -931,7 +931,7 @@ clear:
 这里提一句，address_space这个结构体是用于记录文件和内存的关联的。基数树实际上就是以bit为key，生成多个分支的树。有点像哈夫曼树一样，把一个key的bit位全部读出来，取出key中一位一位或者多位的生成多个阶段的树，只要把这个key的bit位全部读取完毕就能找到内容。
 
 是一个十分快速的映射数据结构,借用网上的一个图：
-![基数树.jpeg](https://upload-images.jianshu.io/upload_images/9880421-4a2584ec53c18fcf.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![基数树.jpeg](/images/基数树.jpeg)
 
 
 这样就完成了映射，而这种机制其实是比起Binder的mmap很接近ext4文件系统的方式。
@@ -1086,7 +1086,7 @@ restart:
 	return range_alloc(asma, range, purged, pgstart, pgend);
 }
 ```
-![unpin5种情况.png](https://upload-images.jianshu.io/upload_images/9880421-f2ef45b839c04c15.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![unpin5种情况.png](/images/unpin5种情况.png)
 
 在这个过程中需要比较从unpinned_list链表种每一项已经解锁的range。大致会分为5种情况：
 在情况1，2，3种当解锁的range在这一次pagestart和pageend之间有交集，则会合并起来.
@@ -1326,7 +1326,7 @@ ashmem的使用流程如下：
 因此，mmap诞生出来的整个内存块默认是解锁的。也正因为添加到全局变量ashmem_lru_list中，也就让内存管理系统遍历ashmem_lru_list通过shmem_fallocate文件操作对这些内存进行解开映射，并且留下文件空洞(其实就是想办法通过页缓存,重新申请等手段重新把这一块内存重新填补上来)，
 
 原理图如下：
-![ashmem.png](https://upload-images.jianshu.io/upload_images/9880421-1d6630ea15de8042.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![ashmem.png](/images/ashmem设计.png)
 
 ## 思考
 那么ashmem和Binder有什么区别呢？先放上Binder的mmap 的文章：

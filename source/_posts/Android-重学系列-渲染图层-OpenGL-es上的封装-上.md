@@ -1000,7 +1000,7 @@ bool BufferQueueCore::adjustAvailableSlotsLocked(int delta) {
 如果delta小于0。说明当前已经超过了需求了。不需要这么多缓存了。先会移除mFreeSlots过多的插槽到mUnusedSlots。再会检测mFreeBuffers，把多余的放到mUnusedSlots。
 
 那么mFreeBuffers和mFreeSlots是什么区别呢？mFreeSlots是指还有缓冲队列中多少空闲的位置给图元缓冲使用。mFreeBuffers是指已经使用了的的图元缓冲，但是没有在工作的。
-![Slots的调整.png](https://upload-images.jianshu.io/upload_images/9880421-549fecd2086b0244.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Slots的调整.png](/images/Slots的调整.png)
 
 ##### clearBufferSlotLocked 清理slot中的缓存
 ```cpp
@@ -1501,7 +1501,7 @@ void invalidate_texture(ogles_context_t* c, int tmu, uint8_t flags = 0xFF) {
 能看到此时实际上texture_unit_t所有所有的元素都指向这个默认的空纹理。并且设置每一个的纹理的dirty状态。
 
 让我们绘制一个UML图，来总结他们的关系
-![纹理结构.png](https://upload-images.jianshu.io/upload_images/9880421-9da836d8609b6e83.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![纹理结构.png](/images/纹理结构.png)
 
 实际上指的是egl_context_t中的 EGLContext是ogles_context_t结构体。
 
@@ -1884,7 +1884,7 @@ struct framebuffer_t {
 
 
 #### makeCurrent
-```
+```cpp
 static int makeCurrent(ogles_context_t* gl)
 {
     ogles_context_t* current = (ogles_context_t*)getGlThreadSpecific();
@@ -1930,11 +1930,11 @@ static int makeCurrent(ogles_context_t* gl)
 
 只有完成这六步骤，才是完成一个OpenGL es的初始化。
 
-![OpenGL 上下文结构.png](https://upload-images.jianshu.io/upload_images/9880421-04531d8ab3d783fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![OpenGL上下文结构.png](/images/OpenGL上下文结构.png)
 
 我们终于剖开了OpenGL es第一层神秘面纱了。整体和系统之间的设计如下：
 
-![OpenGL es设计.png](https://upload-images.jianshu.io/upload_images/9880421-5d021a54b24ea912.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![OpenGLes设计.png](/images/OpenGLes设计.png)
 
 ## 思考
 我最早以为OpenGL es的服务端是显卡驱动厂商提供的驱动程序，有直接的协议访问显示那一块的内存的权限，直接通过自己的GPU计算完毕之后，就输入到硬件。但是实际并非如此，显卡仅仅只是一个超级计算机单元，并没有权限直接写数据到屏幕上。
@@ -1944,7 +1944,7 @@ static int makeCurrent(ogles_context_t* gl)
 虽然屏蔽了管道的原理，不过经过阅读源码，我突然想起为什么ui必须在主线程中完成？其实ui是可以多线程更新的，之前一段时间阅读了Litho的源码，还有听说了腾讯那边多线程更新ui的设计之后，他们并非是多个线程操作更新ui，而是让ui始终保持在业务逻辑之外的线程外，保证两者不耦合。不过创建的onCreate还是主线程，之后onResume通过Hook成为异步更新的线程。
 
 那么所谓多线程更新ui，其实只是把ui放在一个ui线程，业务在业务线程中，成为一个并行的设计。
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-871be68ad022ec20.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![异步渲染.png](/images/异步渲染.png)
 
 问题就变成了为什么必须保证ui不能被多个线程同时更新。经过阅读本次源码之后，其实发现这背后真正的设计思想是一个Surface最好被同一个线程持有更新，不要多线程操作Surface。不管是OpenGL es处理图像信息，还是SF处理图元缓冲插槽，都尽可能减少上线程互斥锁，那么就有可能是一个线程不安全的操作。当然这样的考虑也是理所当然的，上锁了就会调用到内核api这样就会降低整个系统的处理像素的速度，从而帧数。
 

@@ -26,7 +26,7 @@ tags:
 
 在Android 8.0之后，Google为了各大手机厂商的方便，执行了一个名为Treble计划，其目的就是为了让各大手机厂商和硬件商能够在最小代价在Android系统升级的时候，能快速更新硬件相关的特性。
 
-![hal的升级历程.png](https://upload-images.jianshu.io/upload_images/9880421-2fa3022f3f7ffd18.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![hal的升级历程.png](/images/hal的升级历程.png)
 
 大致可以把hal层的历史分为如下3个时期:
 - 1.Legacy Hal：Android 8.0 之前版本的 HAL 都是编译成 so，然后动态链接到各个 frameworks service 中去。
@@ -85,14 +85,14 @@ interface IComposer {
 能看到实际上和aidl十分相似不是吗。当我们把它类比成aidl就特别好理解了。一般的，编写了一个hal文件之后，就需要使用hidl-gen工具，类似aidl一样生成一个真正的cpp文件，里面包含着真正的跨进程通信逻辑，以及相关的接口文件。
 
 当我们写好hal文件之后，并且通过hidl-gen生成的文件中实现接口后，写好Android.bp文件。大致上能得到类似的目录：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-ea17159e346744d4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![目录1.png](/images/目录1.png)
 当然这是composer 2.2版本，不过从大体设计看来差距不是很大。
 
 一般的会在default子目录编写好入口方法：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-83cd401972ebe5bd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![目录2.png](/images/目录2.png)
 
 能看到2.2版本下只剩下一个service.cpp。我们再看看2.1版本又是如何：
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-dc0cbe1b1cc988e5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![目录3.png](/images/目录3.png)
 
 能看到2.1版本中，多了一个cpp文件passthrough。顾名思义，passthrough就是直通模式，service就是binder service模式。
 文件：/[hardware](http://androidxref.com/9.0.0_r3/xref/hardware/)/[interfaces](http://androidxref.com/9.0.0_r3/xref/hardware/interfaces/)/[graphics](http://androidxref.com/9.0.0_r3/xref/hardware/interfaces/graphics/)/[composer](http://androidxref.com/9.0.0_r3/xref/hardware/interfaces/graphics/composer/)/[2.1](http://androidxref.com/9.0.0_r3/xref/hardware/interfaces/graphics/composer/2.1/)/[default](http://androidxref.com/9.0.0_r3/xref/hardware/interfaces/graphics/composer/2.1/default/)/[Android.bp](http://androidxref.com/9.0.0_r3/xref/hardware/interfaces/graphics/composer/2.1/default/Android.bp)
@@ -201,7 +201,7 @@ cc_library_headers {
 }
 ```
 能看到进一步的引入了hal，以及compser2.2转2.1的adapter等。值得注意的是export_include_dirs这个命令，这个命令是指把这个目录下的头文件全部引入到该模块中,而在这个文件夹中，就是hal硬件抽象层的实现代码。
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-f935c4e77cc284a0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![目录4.png](/images/目录4.png)
 
 而这两个文件就是Composer在hal中passthrough模式进入到具体业务的入口。
 
@@ -849,7 +849,7 @@ HwcHalImpl 本质上就是继承hal::ComposerHal，也就是说ComposerHal持有
 很简单，本质上就是一个ComposerImpl持有了ComposerHal。
 
 嵌套的层级有点深，接下来让我把整个UML图画出来就清晰了，再结合一下上一篇文章，梳理一下。
-![HWC关键数据结构.jpg](https://upload-images.jianshu.io/upload_images/9880421-36b6605c236800a7.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![HWC关键数据结构.jpg](/images/HWC关键数据结构.jpg)
 
 
 
@@ -1853,7 +1853,7 @@ void HWC2On1Adapter::hwc1Hotplug(int hwc1DisplayId, int connected) {
 - 对于回调来讲，分为两部分，当registerCallback的时候会消耗从底层回调上来。另一部分则是从底层直接拿到对应的HwcHalImpl的hook函数向上回调。
 
 原理如图：
-![ComposerCallback.png](https://upload-images.jianshu.io/upload_images/9880421-ba953bffd1a640a3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![ComposerCallback.png](/images/ComposerCallback.png)
 
 
 了解Hal层的运作原理，为之后的逻辑打下基础。

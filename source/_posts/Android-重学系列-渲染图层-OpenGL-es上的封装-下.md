@@ -16,7 +16,7 @@ tags:
 经过上一篇对OpenGL es的环境搭建，了解几个关键的数据结构，本文将会解析软件模拟纹理的绘制流程。
 
 先摆一张，OpenGL es上下文的数据结构:
-![OpenGL 上下文结构.png](https://upload-images.jianshu.io/upload_images/9880421-04531d8ab3d783fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![OpenGL上下文结构.png](/images/OpenGL上下文结构.png)
 
 在阅读本文时候，我们需要时刻记住这个图。
 
@@ -150,7 +150,7 @@ sp<EGLTextureObject> EGLSurfaceManager::createTexture(GLuint name)
 此时进行了EGLTextureObject初始化并且添加到mTextures。
 
 ### EGLTextureObject 初始化
-```
+```cpp
 class EGLTextureObject : public LightRefBase<EGLTextureObject>
 {
 public:
@@ -1083,7 +1083,7 @@ es是否包含eglSwapBuffersWithDamageKHR方法来决定，如果包含这个优
 ### OpenGL es eglSwapBuffers
 文件：/[frameworks](http://androidxref.com/9.0.0_r3/xref/frameworks/)/[native](http://androidxref.com/9.0.0_r3/xref/frameworks/native/)/[opengl](http://androidxref.com/9.0.0_r3/xref/frameworks/native/opengl/)/[libagl](http://androidxref.com/9.0.0_r3/xref/frameworks/native/opengl/libagl/)/[egl.cpp](http://androidxref.com/9.0.0_r3/xref/frameworks/native/opengl/libagl/egl.cpp)
 
-```
+```cpp
  EGLBoolean eglSwapBuffers(EGLDisplay dpy, EGLSurface draw)
 {
 ...
@@ -1311,7 +1311,7 @@ void glEGLImageTargetTexture2DOES(GLenum target, GLeglImageOES image)
 
 ## 总结
 先用一张图总结一下：
-![OpenGL es纹理绘制过程.png](https://upload-images.jianshu.io/upload_images/9880421-7b030e6eaf5797e2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![OpenGLes纹理绘制过程.png](/images/OpenGLes纹理绘制过程.png)
 
 
 到这里，我就把Android对OpenGL es的纹理开发流程的源码重新梳理了一遍，对整个机制有了更加深刻的理解。

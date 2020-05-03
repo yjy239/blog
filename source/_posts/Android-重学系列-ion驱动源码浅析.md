@@ -54,7 +54,7 @@ ioctl(mIonFd, ION_IOC_MAP, &fd_data)
 首先介绍dma_buf的2个角色，importer和exporter。importer是dma_buf驱动中的图元消费者，exporter是dma_buf驱动中的图元生产者。
 
 这里借用大佬的图片：
-![dma_buf.png](https://upload-images.jianshu.io/upload_images/9880421-2ede1f02875f291c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![dma_buf.png](/images/dma_buf.png)
 
 
 ion是基于dma_buf设计完成的。经过阅读源码，其实不少思路和Android的匿名内存有点相似。阅读本文之前就算不知道dma_buf的设计思想也没关系，我不会仔细到每一行，我会注重其在gralloc服务中的申请流程，看看ion是如何管理共享内存，为什么要抛弃ashmem。
@@ -1852,7 +1852,7 @@ void ion_free(struct ion_client *client, struct ion_handle *handle)
 
 ## 总结
 先用一幅图来总结整个结构和流程：
-![GraphicBuffer和ion.png](https://upload-images.jianshu.io/upload_images/9880421-12d71610ec12a6a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![GraphicBuffer和ion.png](/images/GraphicBuffer和ion.png)
 
 先来看初始化：
 整个ion的初始化到这一步就完成，从device驱动结构体到缓存的核心ion_handle初始化。

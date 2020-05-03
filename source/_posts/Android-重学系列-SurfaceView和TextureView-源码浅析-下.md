@@ -1445,17 +1445,17 @@ bool LayerDrawable::DrawLayer(GrContext* context, SkCanvas* canvas, Layer* layer
 ## 总结
 这两篇文章并没有太过详细的分析软件渲染和硬件渲染。但是还是从SurfaceView和TextureView两者看到两者之间的区别。先来用一幅图总结TextureView的硬件绘制流程。
 
-![TextureView硬件渲染.jpg](https://upload-images.jianshu.io/upload_images/9880421-f74e1722d383126b.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![TextureView硬件渲染.jpg](/images/TextureView硬件渲染.jpg)
 
 请注意这里面从RootRenderNode中分发DisplayListCanvas下去，是为了共享来自同一个DisplayListCanvas中的DisplayList树。但是每一个RenderNode都会在自己的DisplaylistCanvas中进行绘制。
 
 官方也有对Android的Graphic体系，进行一次简单的原理示意图:
-![TextureView大致示意图.png](https://upload-images.jianshu.io/upload_images/9880421-1d4efc9602b05e48.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![TextureView大致示意图.png](/images/TextureView大致示意图.png)
 
 其实官方这一副图已经很好的解释了TextureView和系统之间的合作关系。但是实际上还是不够仔细，也不够准确。在我看来OpenGL es不应该只是一个图元的消费者，同时也可以当作一个图元的生产者。由于OpenGL es和Skia的特殊性，我一般不会把这两者都成为消费者和生产者，我喜欢称它们是像素的加工者，或者说是画笔。
 
 可能到这里还是不够详细，这里根据本文画了一个更为详细的核心原理图:
-![TextureView的核心原理.jpg](https://upload-images.jianshu.io/upload_images/9880421-05463804931ea298.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![TextureView的核心原理.jpg](/images/TextureView的核心原理.jpg)
 
 总结一下，里面有几个十分关键的角色：
 - 1.ThreadedRenderer 是硬件渲染的入口点，里面包含了所有硬件渲染的根RenderNode，以及一个根DisplayListCanvas。虽然每一个View一般都会包含自己的DisplayListCanvas。之所以存在一个根是为了公用一个DisplayListCanvas中的DisplayList。

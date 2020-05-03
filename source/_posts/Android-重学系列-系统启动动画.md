@@ -1514,7 +1514,7 @@ requestExit其实就是退出该BootAnimation线程的threadLoop方法，这样�
 ## 总结
 用一幅图总结：
 
-![开机动画启动原理.jpg](https://upload-images.jianshu.io/upload_images/9880421-138c2e9552a02da1.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![开机动画启动原理.jpg](/images/开机动画启动原理.jpg)
 
 
 

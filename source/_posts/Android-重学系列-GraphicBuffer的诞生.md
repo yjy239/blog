@@ -1390,7 +1390,7 @@ IAllocController中间包装了一个IonAlloc。IonController中包装一个ion�
 
 ### 小结
 涉及到的对象有点多，我们还是画一个UML图来梳理一遍整个GraphicAllactor的Hal层初始化。
-![GraphicBuffer生成体系.png](https://upload-images.jianshu.io/upload_images/9880421-91cdfcc956f1ffe2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![GraphicBuffer生成体系.png](/images/GraphicBuffer生成体系.png)
 
 记住这幅图就能对整个GraphicBuffer的体系的设计了然于胸。
 
@@ -2168,7 +2168,7 @@ status_t GraphicBuffer::unflatten(
 
 ## 总结
 老规矩一幅图总结：
-![GraphicBuffer诞生到可使用.png](https://upload-images.jianshu.io/upload_images/9880421-4b4ce2a84bb4bf5b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![GraphicBuffer诞生到可使用.png](/images/GraphicBuffer诞生到可使用.png)
 
 
 一般来说：图元的绘制分为如下几个步骤：

@@ -314,7 +314,7 @@ reduceTransparentRegion默认是true。
 - 5. activeTransparentRegion获取当前活跃的透明区域，把当前这个已经裁剪过的win区域剪掉，剪掉所有透明的区域。
 
 这个步骤用图画出来会好理解
-![Layer区域计算.png](https://upload-images.jianshu.io/upload_images/9880421-62fcef3b9255a3dd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Layer区域计算.png](/images/Layer区域计算.png)
 
 最后红色的区域就是Layer 的边缘大小。
 
@@ -329,7 +329,7 @@ reduceTransparentRegion默认是true。
 
 用一幅图表示，红色代表coveredRegion，蓝色代表visibleRegion
 
-![可视区域的计算.png](https://upload-images.jianshu.io/upload_images/9880421-4397cb4f210f8323.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![可视区域的计算.png](/images/可视区域的计算.png)
 
 最后都保存在DisplayDevice中。
 
@@ -936,7 +936,7 @@ Error Composer::presentOrValidateDisplay(Display display, uint32_t* outNumTypes,
 - 3.执行结束后，通过ComposerReader把结果读出来。
 
 这两个对象，我就不细说，在SF的Hal层初始化有提到过。这里就列出三者之间的关系。
-![ComposerCommandEngine的设计.jpg](https://upload-images.jianshu.io/upload_images/9880421-62cf30876bd4483e.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![ComposerCommandEngine的设计.jpg](/images/ComposerCommandEngine的设计.jpg)
 
 其详细的设计就不解析，其实很简单。ComposerWriter写到一个mData的数据数组中，不足则按照初始长度的两倍进行扩容。execute将会调用ComposerClient的execute方法，输入这些数据并且进行执行。执行完毕后，通过reader读出。有兴趣的读者，可以去读一读。
 

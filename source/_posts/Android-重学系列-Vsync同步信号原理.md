@@ -1343,7 +1343,7 @@ bool DispSync::addResyncSample(nsecs_t timestamp) {
 我记得，我在模电中第一次接触了和正弦函数表示形式一致的正弦波，其中有几个参数有特殊定义，其中ωt+Φ 就是我们说的相位(phase)；Φ就是初相决定函数的左右移动；A是幅度；ω角速度,决定了正弦波的周期(T=2π/|ω|)；k代表偏距,控制图像的上下移动;两个同频率(ω相同)正弦波之间相位之差称为相位差。
 
 表示在图里面就是如下：
-![正弦波截取.png](https://upload-images.jianshu.io/upload_images/9880421-beafff28ba3f1f7b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![正弦波截取.png](/images/正弦波截取.png)
 
 这种特性可以让两个不同正弦波有着不变的相位差，很符合我们appEventThread和sfEventThread的推导。
 
@@ -1425,7 +1425,7 @@ mResyncSamples是存在于DispSync中的缓存64个大小数组，保存每一�
 通过这种方法能看出，其实mResyncSamples的数组就是存储每一次的VSync到达的时间，只存储32份。
 
 用一幅图来表示，实际上就是在这个一次函数中，取32点，如下图：
-![时间采样.png](https://upload-images.jianshu.io/upload_images/9880421-852efeaf60ac4283.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![时间采样.png](/images/时间采样.png)
 
 
 每一次通过设定的周期mPeriod中采样32个点，而且希望实在第一个周期中进行计算。因为在第一个周期中，每一个点就对应上mResyncSamples时间戳数组的下标。
@@ -1447,10 +1447,10 @@ mResyncSamples是存在于DispSync中的缓存64个大小数组，保存每一�
 
 到这里我们就能理解了mFirstResyncSample和mNumResyncSamples分别代表什么。我们分为2种情况：
 - 1.一开始mFirstResyncSample和mNumResyncSamples必定是0.那么每一次递增都会递增mNumResyncSamples。假如此时mNumResyncSamples已经叠加了六次，对应到上图采样点位置如下：
-![采样情况一.png](https://upload-images.jianshu.io/upload_images/9880421-36a97f6f1d274044.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![采样情况一.png](/images/采样情况一.png)
 
 - 2. 不断的递增mNumResyncSamples，如果超出了32个采样点，则会把mFirstResyncSample对应第一周期第一个位置。
-![采样情况二.png](https://upload-images.jianshu.io/upload_images/9880421-14befafaaa78e18c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![采样情况二.png](/images/采样情况二.png)
 
 
 
@@ -1477,7 +1477,7 @@ mResyncSamples是存在于DispSync中的缓存64个大小数组，保存每一�
 
 理想是每一次VSync从硬件到SF，SF从第一次VSync消费到第二次的间隔是一致的，但是实际上是不太可能，这个间隔和当前的CPU环境相关。在第一次的时候，会基于硬件传递上来的VSync周期计算处一个新的软件周期出来。
 如下图：
-![周期计算.png](https://upload-images.jianshu.io/upload_images/9880421-ce36cab2905b3e0c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![周期计算.png](/images/周期计算.png)
 
 假如要处理第2帧对应的VSync，此时会遍历mResyncSamples中index为1，和0的时间戳，计算两者之间的差值，找到最大的时间差和最小的时间差。并把时间差都累计起来，计算到从第0次到第6次之间总时间差。
 
@@ -1495,7 +1495,7 @@ mResyncSamples是存在于DispSync中的缓存64个大小数组，保存每一�
 我们依照上面，把点都还在一个时间轴上
 
 我们思考一下，如果我们直接把每一次计算好新的软件发送VSync周期作为基准通知SF和App进程。这样会造成什么？我们先把部分的VSync间隔mPeriod周期的点画在时间轴上。
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-badbc279684d8f93.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![采样点.png](/images/采样点.png)
 
 
 因为硬件发出的VSync 必定是周期性的,我们不妨使用有着类似性质的数学工具正弦函数来看这个计算结果(虽然数学上不严谨，因为VSync并非是连续性的)。
@@ -1516,7 +1516,7 @@ mResyncSamples是存在于DispSync中的缓存64个大小数组，保存每一�
 换句话说，我们求这个Φ(初相)大小。
 
 如下图：
-![软硬件VSync相位差.png](https://upload-images.jianshu.io/upload_images/9880421-40f84480a24b43cc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![软硬件VSync相位差.png](/images/软硬件VSync相位差.png)
 
 
 因此有了这一层的数学原理，所以Google工程师会计算两种VSync发送频率的相位差。
@@ -1556,7 +1556,7 @@ samplePhase又是什么意思呢？记住在这个过程中两个角色：
 - 2.经过均值化后，理想的VSync发送的时间点。
 
 下图中，红色点是均值化后理想的发送时机，蓝色的点是真正的VSync时机
-![image.png](https://upload-images.jianshu.io/upload_images/9880421-2bff61a52155ae17.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![采样点的偏差.png](/images/采样点的偏差.png)
 
 实际上每一次请求VSync周期和均值周期是有偏差的，我们来找找看这个偏差数值比起一个周期mPeriod偏移了多少，如果能求出前后两次软件发送VSync请求偏移量的均值，就说明我们能够找到在当前CPU环境下软件发送前后两次VSync在CPU中消耗了多少。
 
@@ -1582,7 +1582,7 @@ sample % mPeriod代表当前距离第一次硬件发送上来的VSync有多少�
 能看到本质上就是找到每一个采样点，也就是获取每一次软件VSync的偏差角度，求其平均值。由于角度的计算特殊，所以使用了atan的方式进行计算。
 
 换算过程图里面如下
-![计算角度.png](https://upload-images.jianshu.io/upload_images/9880421-e25dad78de9c8938.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![计算角度.png](/images/计算角度.png)
 记住我们是不知道蓝色的先是长什么样子的，其实是只有红色点独立在坐标中,这里只是为了好理解才画出来。只有经过计算了mPhase，已知硬件VSync频率的角速度，我们就可以画出蓝色曲线。
 
 其实在这里我们可以这里理解，应该每一次VSync发送的点就是在这个周期上的某一个点左右，这样我们能够通过$phase = atan2(sampleAvgY, sampleAvgX)$计算出mPhase来得到新的phase也就是对应Φ初相。
@@ -1701,7 +1701,7 @@ nsecs_t DispSync::computeNextRefresh(int periodOffset) const {
 
 # 总结
 老规矩，我们先上一副时序图来总结VSync的发送与监听流程。
-![VSync回调机制.jpg](https://upload-images.jianshu.io/upload_images/9880421-b3292681ea1e7f0a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![VSync回调机制.jpg](/images/VSync回调机制.jpg)
 
 
 VSync和Fence都是SF中的同步机制。可以说，两者都是SF渲染机制的核心。不过两者之间的角色不一样。
@@ -1709,7 +1709,7 @@ VSync和Fence都是SF中的同步机制。可以说，两者都是SF渲染机制
 Fence的要旨是控制GraphicBuffer的状态，是否允许工作，因为Fence是一段共享内存，很可能被多个进程修改，维护的是GraphicBuffer资源的资源竞争的问题，保证资源一次只被一个进程绘制。
 
 VSync的要旨是协调硬件，软件之间工作的时序性，如下图：
-![SF Vsync.png](https://upload-images.jianshu.io/upload_images/9880421-eae9ad00f72ba442.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![SF_Vsync.png](/images/SF_Vsync.png)
 
 为什么需要拿到硬件VSync发送周期后，动态计算软件的VSync周期呢(当时间不足的时候，进行阻塞)？原因很简单，实际上就是因为VSync从硬件触发后，途径内核，SF的处理会有一定的消耗，所以软件发送VSync需要一定的延时，周期也会比原来硬件VSync的大一点(近似相等)。
 
@@ -1725,7 +1725,7 @@ SF是怎么进行跳帧处理呢？
 > 因为每一次App应用的View绘制流程都是等到VSync进行刷新的。那么每一次VSync时间必定和GraphicBuffer入队时间是相对应。因此只需要推算出下一个周期的VSync加上appEventThread的相位偏移，就能找到预计显示的时间。
 
 为了避免SF进程和app进程之间处理VSync之间工作时序出现异常，如下图：
-![sf和app的时间差.png](https://upload-images.jianshu.io/upload_images/9880421-9444db0a13b008ae.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![sf和app的时间差.png](/images/sf和app的时间差.png)
 
 这两个时间差是以硬件传递过来的VSync周期为基准，计算出软件的周期和延时。再以软件的延时相位为基准，app和sf向后延时一段各自固定的时间。
 
@@ -1738,7 +1738,7 @@ SF是怎么进行跳帧处理呢？
 app以VSync信号为基准刷新View把GraphicBuffer交给SF处理。VSync的周期又是根据前后两次计算的。如果VSync周期太大了，就会导致app刷新太慢。因此软件发送VSync周期的计算是把app刷新的CPU开销一起计算进来。因此必须先完成app对应的VSync信号，才能处理SF的VSync重新调整周期。不然会得到一个不是很准确的VSync周期。
 
 假如没有这个相位差，会发生什么？sf一定比app快(因为处于task最高优先级的FIFO队列中)。这样就是出现SF提前进行VSync计算，计算平局值没算入app绘制消耗。导致了周期计算失误，同时在推算下一个VSync的时候，会提前点。导致第一帧还没算完，就要准备显示第二帧造成类似下图jank的情况。
-![jank.png](https://upload-images.jianshu.io/upload_images/9880421-55fef595ed4a978b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![jank.png](/images/jank.png)
 
 不过，一般的jank是因为绘制一帧的事件太长，导致后面的帧全部造成延时。而VSync的相位混淆，则是因为VSync软件周期太短了，导致GraphicBuffer多显示了一个VSync周期。
 
@@ -1747,7 +1747,7 @@ app以VSync信号为基准刷新View把GraphicBuffer交给SF处理。VSync的周
 为了避免在VSync模型的jank异常，SF使用了多缓冲(多GraphicBuffer)方式进行处理
 纵览对应整个SF并行模型：
 
-![SF并行消费模型.png](https://upload-images.jianshu.io/upload_images/9880421-636d57f839f39d34.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![SF并行消费模型.png](/images/SF并行消费模型.png)
 
 App进程通过Surface的图元生产者的dequeue获取GraphicBuffer，在方法waitForFreeSlotThenRelock从mFreeSlots和mFreeBuffer中分配Buffer时候有这么一段：
 ```cpp

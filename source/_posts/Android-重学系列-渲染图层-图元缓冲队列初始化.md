@@ -981,7 +981,7 @@ void ConsumerBase::setFrameAvailableListener(
 ```
 
 这样就完成了整个监听的循环。类的嵌套太多，让我画一张UML图来整理下。
-![Layer与缓冲队列的设计.png](https://upload-images.jianshu.io/upload_images/9880421-87c2b00b04c71361.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Layer与缓冲队列的设计.png](/images/Layer与缓冲队列的设计.png)
 
 
 > 总结一句话就是，因为FrameAvailableListener最终进入到BufferQueueCore中。当生产者生产了一个图元的时候就会从core中获取FrameAvailableListener调用监听，进入到ConsumeBase中，进一步的回调到BufferLayer中。最后到BufferLayer和SF执行后面的绘制步骤。
@@ -1267,7 +1267,7 @@ Surface::Surface(const sp<IGraphicBufferProducer>& bufferProducer, bool controll
 
 后面的步骤，我们慢慢再聊。老规矩用一幅图总结整个流程。
 
-![SF的生产者消费者模型.png](https://upload-images.jianshu.io/upload_images/9880421-ac4f24d201828e1a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![SF的生产者消费者模型.png](/images/SF的生产者消费者模型.png)
 
 
 

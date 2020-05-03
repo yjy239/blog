@@ -226,15 +226,15 @@ int main(int, char**) {
 }
 ```
 能够在这里看到有如下几个核心方法：
-- 1. startGraphicsAllocatorService 初始化Hal层的图元生成器服务
+- 1.startGraphicsAllocatorService 初始化Hal层的图元生成器服务
 - 2.初始化ProcessState，也就是把该进程映射到Binder驱动程序
-- 3. SurfaceFlinger实例化
-- 4. set_sched_policy设置为前台进程
+- 3.SurfaceFlinger实例化
+- 4.set_sched_policy设置为前台进程
 - 5.SurfaceFlinger调用init方法
 - 6.因为SurfaceFlinger本质上也是一个Binder服务，因此添加到ServiceManager进程中。
 - 7.初始化GpuService，也添加到ServiceManager进程中
 - 8.启动DisplayService
-- 9. sched_setscheduler 把进程调度模式设置为实时进程的FIFO
+- 9.sched_setscheduler 把进程调度模式设置为实时进程的FIFO
 - 10.调用SurfaceFlinger的run方法。
 
 
@@ -280,14 +280,14 @@ const struct sched_class *sched_class;
 这样根据实际运行时间，实际运行时间短的分配权重高，长的权重少，这样就变相公平。
 
 每个进程当设置了不同的调度策略将会挂载到不同的进度策略类别队列中。当调用了__scheme方法之后，就会调用pick_next_task，这个时候按照如下图所示的，按照顺序遍历整个调度策略的链表，如下图：
-![进程调度.jpeg](https://upload-images.jianshu.io/upload_images/9880421-33edf447ac7ba990.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![进程调度.jpeg](/images/进程调度.jpeg)
 
 当有了这些基础知识之后，我们就能很简单的理解整个SF了。SF被设置为SP_FOREGROUND，设置为前台进程，加入到前台进程组中。接着SCHED_FIFO优先级策略。这样就能保证SF在较高优先级下，运行进程，同时保证只要每一次遍历进程调度类的时候，必定会先让渡给SF，接着让渡给我们App应用。
 
 
 ## SurfaceFlinger的初始化
 在看进程初始化之前，我们先来看看SurfaceFlinger的UML图。
-![SurfaceFlinger UML.png](https://upload-images.jianshu.io/upload_images/9880421-113afe6349bd5a81.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![SurfaceFlinger UML.png](/images/SurfaceFlinger_UML.png)
 
 能看到整个SF体系基础关系还是比较复杂。我们把目光放在最为关键的两个类：
 - 1.ISurfaceComposer 所用面向SF之外进程的Binder操作回调，而这里面我挑选比较重要几个回调放在UML图中，记住他们之后分析会遇到。
@@ -420,7 +420,7 @@ SurfaceFlinger::SurfaceFlinger() : SurfaceFlinger(SkipInitialization) {
 SF构造函数初始化做了如下几件事情：
 - 1.初始化了vsyncPhaseOffsetNs，sfVsyncPhaseOffsetNs两个相位差，分别是指app的以及sf的相位差。关于相位差的基本概念在第一节有和大家聊过，等到专门专题和大家聊聊
 - 2.设置SF的渲染方向，是哪一个角度。
-- 3. mPrimaryDispSync 主显示屏信号同步器初始化
+- 3.mPrimaryDispSync 主显示屏信号同步器初始化
 - 4.根据Android的全局配置，判断是否需要打开三重缓冲，HWC合成机制
 
 
@@ -480,7 +480,7 @@ SurfaceFlinger的MessageQueue机制的角色:
 
 为了加深印象，我这里放出Android应用层MessageQueue和Looper的对应关系来和SF中MessageQueue设计的比较
 
-![Looper设计图.png](https://upload-images.jianshu.io/upload_images/9880421-7e0982511645901c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Looper设计图.png](/images/Looper设计图.png)
 
 
 #### MessageQueue init
@@ -1573,13 +1573,13 @@ void SurfaceFlinger::onInitializeDisplays() {
 本文详细的剖析了SF的hal层之上的SurfaceFlinger的初始化，让我们对SF有了一个整体的概括印象。明白每一个重要角色将会负担什么？
 - 1. PrimaryDispSync EventThread MessageQueue组成了Vysnc同步信号的发放逻辑。
 
-![EventThread.png](https://upload-images.jianshu.io/upload_images/9880421-a28a5c47bcae04c3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![EventThread.png](/images/EventThread.png)
 
 
 - 2.SF 有一个SFBE作为面向硬件设备操作的对象。里面包含两个及其重要的角色HWComposer，以及RenderEngine。HWComposer里面包裹这和hal通信的媒介HWC::Device,同时HWComposer会把SF注册到hal层，等待硬件的回调。RenderEngine则是为渲染图元做出了画面承载体的准备，和准备了OpenGL es相关的环境。
 
 用一副图对SF进行总结。
-![SF 初始化结构.png](https://upload-images.jianshu.io/upload_images/9880421-ea86942667f263d6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![SF初始化结构.png](/images/SF初始化结构.png)
 
 记住这幅图，就对SF有了一个大体的印象，之后我们剖析整个SF的细节，将会从这个图的某一处进行学习和探索。
 

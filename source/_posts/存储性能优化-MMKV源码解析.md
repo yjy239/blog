@@ -33,10 +33,10 @@ tags:
 
 这里是官方的性能的比较图：
 ### Android端 1000次的读写性能比较：
-![mmkv_android比较.png](https://upload-images.jianshu.io/upload_images/9880421-04f91d7787c7654d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![mmkv_android比较.png](/images/mmkv_android比较.png)
 
 ### iOS 10000次的性能比较：
-![mmkv_iOS性能比较.png](https://upload-images.jianshu.io/upload_images/9880421-dd2537579abc1642.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![mmkv_iOS性能比较.png](/images/mmkv_iOS性能比较.png)
 
 能看到mmkv比起我们开发常用的组件要快上数百倍。
 
@@ -2070,7 +2070,7 @@ bool FileLock::platformLock(LockType lockType, bool wait, bool unLockFirstIfNeed
 限于篇幅问题，MMKV的源码解析到这里就结束了。不过MMKV比较核心的思想已经解析了，剩下的就是关于AES和CRC校验算法，以及Ashmem如何进行同步的问题。不过有了这些基础，继续研读MMKV代码就不会那么吃力了。
 
 老规矩，先用一幅图来总结MMKV:
-![MMKV.jpg](https://upload-images.jianshu.io/upload_images/9880421-26104ded25a73843.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![MMKV.jpg](/images/MMKV.jpg)
 
 
 

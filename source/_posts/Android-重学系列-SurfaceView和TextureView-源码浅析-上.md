@@ -1260,7 +1260,7 @@ static void nativeRelease(JNIEnv* env, jclass clazz, jlong nativeObject) {
 
 ### 总结
 先来看看Canvas的设计：
-![Canvas.jpg](https://upload-images.jianshu.io/upload_images/9880421-f0141400ffe673d4.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Canvas.jpg](/images/Canvas.jpg)
 
 实际上整个过程就是SurfaceView屏蔽了onDraw方法。通过自己的对Surface的lock操作以及unlockAndPost的方式把数据发送到SF进程中。
 

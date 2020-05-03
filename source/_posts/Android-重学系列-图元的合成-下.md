@@ -1375,7 +1375,7 @@ void SurfaceFlinger::postComposition(nsecs_t refreshStartTime)
 到这里，我就把整个图元的消费到合成，到硬件的渲染大体都过了一遍，如果对fb驱动具体的技术细节感兴趣，可以去看老罗的。虽然不是最新的，但是也代表经典的设计，我就暂时不去解析fb驱动中做了什么了，如果以后有机会我会解析fb驱动其中的设计。
 
 老规矩，我们把整个流程从图元消费到渲染全部复习一遍，并且用图来表达出来。下面这幅图是我尽可能的精简得出的结果。
-![SF的图元合成.png](https://upload-images.jianshu.io/upload_images/9880421-585c1009e8f4abab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![SF的图元合成.png](/images/SF的图元合成.png)
 
 我把整个流程从消费到合成，我分成三个步骤：
 ### 判断是否需要SF是否需要刷新屏幕
@@ -1407,10 +1407,10 @@ void SurfaceFlinger::postComposition(nsecs_t refreshStartTime)
 - 2. postComposition 处理一些渲染完的同步参数。
 
 因此我们可以得出一个结论，Android中有两种渲染模式，一种是OpenGL es，一种是HWC模式。最后都会通过HWC通过管道通知到fb中。
-![SF的图元合成设计.png](https://upload-images.jianshu.io/upload_images/9880421-3141e9bf535271c7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![SF的图元合成设计.png](/images/SF的图元合成设计.png)
 
 在Android渲染体系中，也不是只有一对生产者消费者模型：
-![SF所有生产消费者.png](https://upload-images.jianshu.io/upload_images/9880421-09d7f7dba6493030.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![SF所有生产消费者.png](/images/SF所有生产消费者.png)
 
 
 
