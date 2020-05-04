@@ -8,6 +8,7 @@ tag:
 description:
 author: yjy239
 summary:
+categories: 性能优化
 tags:
 - Android
 - Android Framework

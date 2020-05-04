@@ -8,6 +8,7 @@ tag:
 description:
 author: yjy239
 summary:
+categories: OpenGL
 tags:
 - OpenGL
 - 音视频

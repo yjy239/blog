@@ -8,6 +8,7 @@ tag:
 description:
 author: yjy239
 summary:
+categories: Android 常用第三方库
 tags:
 - Android
 - Android 常用第三方库

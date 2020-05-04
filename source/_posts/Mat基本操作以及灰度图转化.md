@@ -8,6 +8,7 @@ tag:
 description:
 author:
 summary:
+categories: OpenCV
 mathjax: true
 tags:
 - OpenCV

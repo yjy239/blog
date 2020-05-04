@@ -8,6 +8,7 @@ tag:
 description:
 author: yjy239
 summary:
+categories: Linux kernel
 tags:
 - Linux
 ---

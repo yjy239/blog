@@ -8,6 +8,7 @@ tag:
 description:
 author: yjy239
 summary:
+categories: SurfaceFlinger
 tags:
 - Android
 - Android Framework

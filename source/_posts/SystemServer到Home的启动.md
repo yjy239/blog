@@ -7,6 +7,7 @@ img:
 description:
 author: yjy239
 summary:
+categories: Android Framework
 tags:
 - Android
 - Android Framework

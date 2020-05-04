@@ -9,6 +9,7 @@ description:
 author: yjy239
 summary:
 mathjax: true
+categories: OpenGL
 tags:
 - 音视频
 - OpenGL

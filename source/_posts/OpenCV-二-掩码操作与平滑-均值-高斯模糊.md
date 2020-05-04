@@ -9,6 +9,7 @@ description:
 author: yjy239
 summary:
 mathjax: true
+categories: OpenCV
 tags:
 - 音视频
 - OpenCV

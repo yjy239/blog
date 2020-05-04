@@ -7,6 +7,7 @@ img:
 description:
 author: yjy239
 summary:
+categories: CMakeList
 tags:
 - Linux
 ---

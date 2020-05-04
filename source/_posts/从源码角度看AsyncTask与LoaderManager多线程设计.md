@@ -8,9 +8,10 @@ tag:
 description:
 author: yjy239
 summary:
+categories: Android Framework
 tags:
 - Android
-- Android 常用第三方库
+- Android Framework
 ---
 ## 题外话
 哈，搁置了一段时间没有写博客。主要是去研究Android虚拟机和ffmpeg中ffplay的源码了。计划上是时候把AsyncTask和其中蕴含的多线程编程思想和大家所得分享一下，自己也需要记录一下。
