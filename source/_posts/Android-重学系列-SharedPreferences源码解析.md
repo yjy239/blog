@@ -164,9 +164,10 @@ SharedPreferences sharedPreferences = getSharedPreferences("test", Context.MODE_
     static File makeBackupFile(File prefsFile) {
         return new File(prefsFile.getPath() + ".bak");
     }
-
 ```
+
 - 2.startLoadFromDisk 开始从磁盘中加载数据。
+
 ```java
     private void startLoadFromDisk() {
         synchronized (mLock) {
