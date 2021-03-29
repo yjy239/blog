@@ -1464,6 +1464,8 @@ public void execute(ClientTransactionHandler client, IBinder token,
 ```
 能看到当我们通过performDestroyActivity调用Activity的OnDestroy之后，将会清空Activity中设置的window数据以及设置的ContentView，最后通过activityDestroyed通知AMS。
 
+最后通信到AMS中，发送一个Handler消息，10秒后把ActivityRecord从TaskRecord 中移除，如果此时TaskRecord已经不存在ActivityRecord，则从ActivityStack移除。
+
 #### performDestroyActivity
 ```java
   ActivityClientRecord performDestroyActivity(IBinder token, boolean finishing,
@@ -1528,6 +1530,71 @@ public void execute(ClientTransactionHandler client, IBinder token,
 在performDestroy调用Fragment的onDestroy，以及回调Activity的onDestroy。
 
 这样就完成Activity的onDestroy流程。
+
+#### onRestart
+肯定有人觉得奇怪，七大声明周期之一的onRestart呢？他其实和onStart一样隐藏在TransactionExecutor 中。
+来看看/[frameworks](http://androidxref.com/9.0.0_r3/xref/frameworks/)/[base](http://androidxref.com/9.0.0_r3/xref/frameworks/base/)/[core](http://androidxref.com/9.0.0_r3/xref/frameworks/base/core/)/[java](http://androidxref.com/9.0.0_r3/xref/frameworks/base/core/java/)/[android](http://androidxref.com/9.0.0_r3/xref/frameworks/base/core/java/android/)/[app](http://androidxref.com/9.0.0_r3/xref/frameworks/base/core/java/android/app/)/[servertransaction](http://androidxref.com/9.0.0_r3/xref/frameworks/base/core/java/android/app/servertransaction/)/[TransactionExecutorHelper.java](http://androidxref.com/9.0.0_r3/xref/frameworks/base/core/java/android/app/servertransaction/TransactionExecutorHelper.java)
+：
+```java
+   public IntArray getLifecyclePath(int start, int finish, boolean excludeLastState) {
+        if (start == UNDEFINED || finish == UNDEFINED) {
+            throw new IllegalArgumentException("Can't resolve lifecycle path for undefined state");
+        }
+        if (start == ON_RESTART || finish == ON_RESTART) {
+            throw new IllegalArgumentException(
+                    "Can't start or finish in intermittent RESTART state");
+        }
+        if (finish == PRE_ON_CREATE && start != finish) {
+            throw new IllegalArgumentException("Can only start in pre-onCreate state");
+        }
+
+        mLifecycleSequence.clear();
+        if (finish >= start) {
+            // just go there
+...
+        } else { // finish < start, can't just cycle down
+            if (start == ON_PAUSE && finish == ON_RESUME) {
+                // Special case when we can just directly go to resumed state.
+                mLifecycleSequence.add(ON_RESUME);
+            } else if (start <= ON_STOP && finish >= ON_START) {
+                // Restart and go to required state.
+
+                // Go to stopped state first.
+                for (int i = start + 1; i <= ON_STOP; i++) {
+                    mLifecycleSequence.add(i);
+                }
+                // Restart
+                mLifecycleSequence.add(ON_RESTART);
+                // Go to required state
+                for (int i = ON_START; i <= finish; i++) {
+                    mLifecycleSequence.add(i);
+                }
+            } else {
+                // Relaunch and go to required state
+
+                // Go to destroyed state first.
+                for (int i = start + 1; i <= ON_DESTROY; i++) {
+                    mLifecycleSequence.add(i);
+                }
+                // Go to required state
+                for (int i = ON_CREATE; i <= finish; i++) {
+                    mLifecycleSequence.add(i);
+                }
+            }
+        }
+
+...
+        return mLifecycleSequence;
+    }
+```
+注意这里的参数start是指当前Activity的状态，finish是指经过TransactionExecutor执行后，每一个`ActivityLifecycleItem `对应的目标Activity需要达到什么声明周期。
+
+- 1.如果当前的Activity是`ON_PAUSE`状态，目标是`ON_RESUME`，此时只需要执行一个`ON_RESUME`
+
+- 2.如果此时的状态是`ON_STOP`之后的状态，且目标是`ON_START`.一般来说此时都是执行的是`ResumeActivityItem` 需要从AMS让此时的Activity转化为可见。此时的`Activity`已经执行了onStop，就会把小于`ON_STOP`的状态添加进来(没有就跳过了),再把`ON_RESTART`声明周期添加进来，最后把`onStart`和`onResume`(因为`ResumeActivityItem` 目标就是`onResume`)添加进来
+
+- 3.最后到达了TransactionExecutor中执行每一个`ActivityLifecycleItem `的生命周期，从而执行了ActivityThread的`onRestart`后执行，`onStart`,`onResume`
+
 
 
 # 总结

@@ -8,7 +8,7 @@ tag:
 description:
 author: yjy239
 summary:
-categories: Android Framework
+categories: View的绘制流程
 tags:
 - Android
 - Android Framework

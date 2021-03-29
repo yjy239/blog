@@ -38,8 +38,8 @@ cover:
 dream:
   enable: true
   showTitle: true
-  title: 对当前人生的思考
-  text: 人生没有重来，不要寄望于时光倒流，不如抓紧现在。
+  title: 感悟
+  text: 咬定青山不放松，立根原在破岩中。千磨万击还坚劲，任尔东西南北风。
 
 # Whether to display the musics.
 # 是否在首页显示音乐.
@@ -131,7 +131,7 @@ reward:
 # minCharNumber: Approve copyright information by copying at least how many characters.
 # 是否激活复制文章时追加博客和作者的版权信息.
 copyright:
-  enable: false
+  enable: true
   minCharNumber: 120 # 至少复制多少个字符就追加版权信息.
   description: 本文章著作权归作者所有，任何形式的转载都请注明出处。
 
@@ -186,8 +186,8 @@ myProjects:
     lemon:
         icon: fa fa-globe
         iconBackground: 'linear-gradient(to bottom right, #29B6F6 0%, #1E88E5 100%)'
-        url: https://github.com/yjy239/lemon
-        desc: flutter:一个基于Isolate池的异步网络请求
+        url: https://github.com/yjy239/YCamera
+        desc: 基于OpenGL编写可动态切换滤镜相机
 
 # config my skills informations in about page.
 # If you don't want to display this `My Skills` content, you can deactivate or delete this configuration.
@@ -209,7 +209,7 @@ mySkills:
       percent: 30%
     flutter:
       background: 'linear-gradient(to right, #00BCD4 0%, #80DEEA 100%)'
-      percent: 40%
+      percent: 20%
 
 myExperience:
   enable: true  
@@ -456,7 +456,7 @@ addthis:
 # 打字效果副标题.
 subtitle: 
   enable: true
-  sub1: 往前多走一步，能看到更远的风景
+  sub1: 咬定青山不放松，立根原在破岩中。千磨万击还坚劲，任尔东西南北风。
   #sub2: Never really desperate, only the lost of the soul # 如果有 ‘ ，请在 ’ 前面加上 \
   
 # 手机二级菜单.

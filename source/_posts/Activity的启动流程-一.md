@@ -390,9 +390,30 @@ queryIntentActivitiesInternal分步骤来说：
             }
 ```
 
-我们可以看到进行下一个的启动之后，如果返回的状态码START_SUCCESS，就会阻塞AMS，等待唤醒。这种同步的处理才让该函数名为mayWait。然而这种情况十分少见。此时被唤醒必定是App启动完成之后，binder驱动找回AMS事务唤醒读取数据的时刻。在整个源码中这种情况只用做测试。毕竟要跨越2次进程才让AMS继续工作这是不可能出现在正常系统中。
+我们可以看到进行下一个的启动之后，如果返回的状态码START_SUCCESS，就会阻塞AMS，等待唤醒。
 
-因此我们把目光放在startActivity这个核心方法中。
+一般来说如果startActivity正常完成了整个流程就返回状态代码为`START_SUCCESS`.进入到了第一次阻塞状态，而这个阻塞会不断判断的当前的状态是否是`START_TASK_TO_FRONT`,是才退出。然而如果此时Activity是第一次创建，则通过`ActivityStarter.startActivity`先`START_SUCCESS`后,通过postStartActivityProcessing 把结果转化为`START_TASK_TO_FRONT`.因此能够立即退出当前的状态。
+```java
+    private int startActivity(final ActivityRecord r, ActivityRecord sourceRecord,
+                IVoiceInteractionSession voiceSession, IVoiceInteractor voiceInteractor,
+                int startFlags, boolean doResume, ActivityOptions options, TaskRecord inTask,
+                ActivityRecord[] outActivity) {
+        int result = START_CANCELED;
+        try {
+            mService.mWindowManager.deferSurfaceLayout();
+            result = startActivityUnchecked(r, sourceRecord, voiceSession, voiceInteractor,
+                    startFlags, doResume, options, inTask, outActivity);
+        } finally {
+     ...
+        }
+
+        postStartActivityProcessing(r, result, mTargetStack);
+
+        return result;
+    }
+```
+
+我们先把目光放在ActivityStartController.startActivity这个后续核心方法中。
 
 
 ## startActivity处理ActivityInfo转化为ActivityRecord
