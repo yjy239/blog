@@ -2506,6 +2506,7 @@ onLayout完全没有任何行为，那么ReactNative是如何摆放这些View的
 - 6.异步方法会调用c++注入的全局静态方法`nativeFlushQueueImmediate `,这个方法会调用`callNativeModules `
 
 native通信到js：
+
 - 1.则会通过动态代理JavaScriptModuleInvocationHandler中处理
 - 2.核心是调用了 mCatalystInstance.callFunction
 - 3.callFunction调用了jni的callFunction方法。
@@ -2542,6 +2543,7 @@ void NativeToJsBridge::callFunction(
 ```
 
 实际上就是交给了JSIExecutor的callFunction。
+
 ```java
 void JSIExecutor::callFunction(
     const std::string &moduleId,
@@ -2582,6 +2584,7 @@ void JSIExecutor::callFunction(
 此时就会通过callFunctionReturnFlushedQueue_方法调用js的方法。执行完后就会调用callNativeModules回调给Android端。
 
 最后还是会调用Bridge中：
+
 ```c++
   void callNativeModules(
       __unused JSExecutor &executor,
@@ -2608,6 +2611,7 @@ void JSIExecutor::callFunction(
 ```
 注意最后一个参数决定了是否回调到java端的监听了OnBatchComplete中。
 也就是CatalystInstanceImpl:
+
 ```java
     public void onBatchComplete() {
       CatalystInstanceImpl impl = mOuter.get();
@@ -2618,6 +2622,7 @@ void JSIExecutor::callFunction(
 ```
 
 此时就会回调所有注册的本地模块的onBatchComplete，也会调用到UIManagerModule的onBatchComplete。
+
 ```java
   public void onBatchComplete() {
     int batchId = mBatchId;

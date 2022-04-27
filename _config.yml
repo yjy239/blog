@@ -106,7 +106,7 @@ theme: matery
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repository: https://github.com/yjy239/yjy239.github.io.git
+  repository: git@github.com:yjy239/yjy239.github.io.git
   branch: master
 
 # math支持
